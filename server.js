@@ -38,7 +38,7 @@ io.sockets.on('connection', function (socket) {
       if (playerB != null){
         playerB.emit('move', data)
       }
-    });
+    })
 
     playerA.on('start', function(){
         console.log("Player 1 started the game");
@@ -63,7 +63,7 @@ io.sockets.on('connection', function (socket) {
 
     
       playerB.on('move', function (data) {
-      console.log("Player 2 wants to go " + data.direction);
+      console.log("Player 2 wants to go " + data.direction)
       if (playerA != null){
         playerA.emit('move', data)
     }
