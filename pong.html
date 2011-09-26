@@ -4,36 +4,72 @@
     
       <script src="/socket.io/socket.io.js"></script>
       <script>
-        var player
-        var socket = io.connect('http://192.168.1.157:8080');
         
-        console.log('connecting to server')
-        socket.on('accepted', function (data) {
-        console.log('Du bist Spieler '+data.player);
-        player = data.player
-        socket.emit('my other event', { my: 'data' });
-      });
-      
+        start = function(){
+          SpielfeldAufbauen()
+          handleDocumentKeyEvents()
+          connectToServer()
 
-      socket.on('move', function (data){
-      
-        switch (data.direction){
-          case 'up':
-          SchlaegerLinks.move(-10); 
-          break
-
-          case 'down':
-          SchlaegerLinks.move(10); 
-          break
         }
-      })
+
+        window.onload = start
+
+      </script>
+      <script>
+
+        var player
+        var socket
+
+        connectToServer = function(){
+          
+          console.log('connecting to server ...')
+
+          socket = createSocketConnectingToServer()          
+
+          startListeningToEventsFromServer(socket)
+        }
+
+        startListeningToEventsFromServer = function(s){
+          handleServerAcceptedEvent(s)
+          handleOtherPlayerMoveEvent(s)
+          handleOtherPlayerTriggeredStartEvent(s)
+        }
+
+        createSocketConnectingToServer = function(){
+          return io.connect('http://192.168.1.157:8080');
+        }
+
+        handleServerAcceptedEvent = function(s){
          
+          s.on('accepted', function (data) {
+            console.log('Du bist Spieler '+data.player);
+            player = data.player
 
-      socket.on('start', function (){
-          NeueRunde()             
-        })
-        
+            s.emit('my other event', { my: 'data' });
+          });
+        }
+      
+        handleOtherPlayerMoveEvent = function(s){
+          
+          s.on('move', function (data){
+          
+            switch (data.direction){
+              case 'up':
+              SchlaegerLinks.move(-10); 
+              break
 
+              case 'down':
+              SchlaegerLinks.move(10); 
+              break
+            }
+          })
+        }
+
+        handleOtherPlayerTriggeredStartEvent = function(s){
+          s.on('start', function (){
+              NeueRunde()             
+          })
+        }
 
 
         starteSpiel = function(){
@@ -115,7 +151,6 @@
     
 }
 
-window.onload = SpielfeldAufbauen;
 
 //Spielfeld wird erstellt
 
@@ -213,7 +248,7 @@ TimerNeu = function(tick, code) {
 
 update = function() {                        //Ball bewegt sich, überprüfen, ob der Ball im Spiel ist und ob ein Schläger den Ball trifft
     var zustand = Ball.move();                  
-    if (zustand != 0) 
+    if (zustand != 0)
      {
         Timer.clearTimer();
         if (zustand == 1) {
@@ -265,7 +300,10 @@ update = function() {                        //Ball bewegt sich, überprüfen, o
     }
 }
 
-document.onkeypress = ErkennenDerTasten;
+handleDocumentKeyEvents = function(){
+  document.onkeypress = ErkennenDerTasten
+}
+
 
 //Der Punktestand soll in einer 7-Segment-Anzeige angezeigt werden, dazu werden 7 Objekte erstellt
 
@@ -320,7 +358,7 @@ var Segmente=new Array(
             this.Strich[i].style.backgroundColor = "green";
         }
         for (i in Segmente[value]) {
-            this.Strich[Segmente[value][i]].style.backgroundColor = "white";
+            this.Strich[Segmente[value][i]].style.backgroundColor = "white"
         }
 
     }
