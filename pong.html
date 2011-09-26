@@ -36,13 +36,13 @@
         }
 
         createSocketConnectingToServer = function(){
-          return io.connect('http://192.168.1.157:8080');
+          return io.connect('http://192.168.1.157:8080')
         }
 
         handleServerAcceptedEvent = function(s){
          
           s.on('accepted', function (data) {
-            console.log('Du bist Spieler '+data.player);
+            console.log('Du bist Spieler '+data.player)
             player = data.player
 
             s.emit('my other event', { my: 'data' });
@@ -92,17 +92,17 @@
 
 
  var hoehe = 350;
- var breite = 700;                      // Höhe und Breite des Feldes
+ var breite = 700;                    
   
     SpielfeldAufbauen = function() {
       Feld = new FeldNeu({ hoehe: hoehe, breite: breite });
       document.body.appendChild(Feld);
 
       Netz = new NetzNeu({                                    
-        x: breite / 2,                            // Wo wird das Netz erstellt
+        x: breite / 2,                           
         y: 0
       }, {
-        hoehe: hoehe,               // Höhe und Breite des Netzes
+        hoehe: hoehe,              
         breite: 2
       }, 40);
       Feld.appendChild(Netz);
