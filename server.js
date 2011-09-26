@@ -2,7 +2,7 @@ var app = require('http').createServer(handler)
   , io = require('socket.io').listen(app)
   , fs = require('fs')
 
-app.listen(8080);
+app.listen(8080)
 
 function handler (req, res) {
   fs.readFile(__dirname + '/pong.html',
@@ -13,7 +13,7 @@ function handler (req, res) {
       }
       res.writeHead(200)
       res.end(data);
-    });
+    })
 }
 
 var playerA = null
