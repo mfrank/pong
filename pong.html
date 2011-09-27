@@ -17,6 +17,11 @@
       </script>
       <script>
 
+      </script>
+      <script>
+
+
+
         var player
         var socket
 
@@ -29,14 +34,14 @@
           startListeningToEventsFromServer(socket)
         }
 
+        createSocketConnectingToServer = function(){
+          return io.connect('http://192.168.1.157:8080')
+        }
+
         startListeningToEventsFromServer = function(s){
           handleServerAcceptedEvent(s)
           handleOtherPlayerMoveEvent(s)
           handleOtherPlayerTriggeredStartEvent(s)
-        }
-
-        createSocketConnectingToServer = function(){
-          return io.connect('http://192.168.1.157:8080')
         }
 
         handleServerAcceptedEvent = function(s){
@@ -44,8 +49,8 @@
           s.on('accepted', function (data) {
             console.log('Du bist Spieler '+data.player)
             player = data.player
-            s.emit('my other event', { my: 'data' });
           });
+
         }
       
         handleOtherPlayerMoveEvent = function(s){
@@ -89,16 +94,14 @@
        
 
 
-  var hoehe = 350;
-  var breite = 700;                    
-  var size = {
-    hoehe: 75, breite: 15
-  }
+        var hoehe = 350
+        var breite = 700                    
+        var size = { hoehe: 75, breite: 15 }
 
-    SpielfeldAufbauen = function() {
-      rahmenDesSpielfeldes()
-      schlaegerUndBall()
-    }
+        SpielfeldAufbauen = function() {
+          rahmenDesSpielfeldes()
+          schlaegerUndBall()
+        }
 
       rahmenDesSpielfeldes = function(){
         feldErstellen()
@@ -256,21 +259,21 @@
     }
 
 update = function() {                       
-    var zustand = Ball.move();                  
-    if (zustand != 0)
-     {
-        Timer.clearTimer();
+    var zustand = Ball.move()                  
+    if (zustand != 0){
+        Timer.clearTimer()
+
         if (zustand == 1) {
            AnzeigeL.setValue(AnzeigeL.value + 1);
         } else {
             AnzeigeR.setValue(AnzeigeR.value + 1);
-        }
+          }
 
-        pruefenObSpielerGewonnenHat()
+        pruefeObSpielerGewonnenHat()
 
         
     }
-    pruefenObSpielerGewonnenHat = function(){
+    pruefeObSpielerGewonnenHat = function(){
     if (AnzeigeL.value == 9 || AnzeigeR.value == 9) {
             Timer.clearTimer()
        } else {
