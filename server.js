@@ -67,13 +67,6 @@ io.sockets.on('connection', function (socket) {
       if (playerA != null){
         playerA.emit('move', data)
     }
-    });
-
-    playerB.on('start', function(){
-      if (playerB != null){
-        playerA.emit('start')
-      }
-    })
-   
+    });   
   }
 });

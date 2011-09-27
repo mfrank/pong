@@ -43,7 +43,6 @@
           s.on('accepted', function (data) {
             console.log('Du bist Spieler '+data.player)
             player = data.player
-
             s.emit('my other event', { my: 'data' });
           });
         }
@@ -116,7 +115,7 @@
       }
 
       FeldNeu = function(size) {
-        var block = new BlockN({ x: 15, y: 15 }, size, "green")
+        var block = new BlockNeu({ x: 15, y: 15 }, size, "green")
         return block
       }
 
@@ -124,19 +123,18 @@
         Netz = new NetzNeu({                                    
           x: breite / 2, y: 0
         }, {
-         hoehe: hoehe,              
-          breite: 2
+         hoehe: hoehe, breite: 2
         }, 40);
         Feld.appendChild(Netz);
       }
 
       NetzNeu = function(position, size, nodash) {                 
-        block = new BlockN(position, size, "green")
+        block = new BlockNeu(position, size, "green")
         block.p = position
         block.s = size
         
         for (i = 0; i < nodash; i++) {
-          Strich = new BlockN({ x: 0, y: i * 2 * block.s.hoehe / (2*nodash) }, { hoehe: size.hoehe / (2 * nodash), breite: size.breite }, "white")
+          Strich = new BlockNeu({ x: 0, y: i * 2 * block.s.hoehe / (2*nodash) }, { hoehe: size.hoehe / (2 * nodash), breite: size.breite }, "white")
           block.appendChild(Strich)
         }
         return block;
@@ -151,14 +149,14 @@
         AnzeigeL.setValue(0)
         Feld.appendChild(AnzeigeL)
       }
-      
+
       rechteAnzeigeWirdErstellt = function(){
         AnzeigeR = new AnzeigeNeu({ x: 3 * breite / 4, y: 5 }, { breite: 20, hoehe: 40 });
         AnzeigeR.setValue(0);
         Feld.appendChild(AnzeigeR);
       }
 
-    BlockN = function(position, size, c) {
+    BlockNeu = function(position, size, c) {
       var block = document.createElement("div")
       block.style.position = "absolute"
       block.style.width = size.breite + 'px'
@@ -169,10 +167,6 @@
       return block
     }
 
-
-    
-
-    
 
     ballErstellen = function(){
       Ball = new BallNeu({                     
@@ -187,7 +181,7 @@
     }
 
     BallNeu = function(position, velocity, radius) {
-      block = new BlockN(position, { hoehe: radius, breite: radius }, "white")
+      block = new BlockNeu(position, { hoehe: radius, breite: radius }, "white")
       block.p = position
       block.v = velocity
       block.r = radius
@@ -231,7 +225,7 @@
     }
 
     SchlaegerNeu = function(position, size) {
-      block = BlockN(position, size, "white")
+      block = BlockNeu(position, size, "white")
       block.p = position
       block.s = size
       block.move = function(d) {
@@ -282,6 +276,9 @@ update = function() {
     var e = window.event ? event : e;
     if (e.keyCode) { key = e.keyCode; }
     else if (typeof (e.which) != 'undefined') { key = e.which; }
+    
+
+
     if (player == 1){
       switch (key) {       
         case (32):                                        
@@ -318,38 +315,28 @@ handleDocumentKeyboardEvents = function(){
   
 
 AnzeigeNeu = function(position, size) {
-  block = new BlockN(position, size, "green")
+  block = new BlockNeu(position, size, "green")
   block.p = position
   block.s = size
   block.score = 0
   block.Strich = []
   
- // horizontaleLinienSegmentanzeige()
- // vertikaleLinienSegmentanzeige()
- // segmenteArray()
+  for (i = 0; i < 3; i++) {
+    block.Strich[i] = new BlockNeu({ x: 1, y: (i * block.s.hoehe / 2) }, { hoehe: 3, breite: block.s.breite - 2 }, "white")
+    block.appendChild(block.Strich[i])
+  }
 
-
-  
-    for (i = 0; i < 3; i++) {
-      block.Strich[i] = new BlockN({ x: 1, y: (i * block.s.hoehe / 2) }, { hoehe: 3, breite: block.s.breite - 2 }, "white")
-      block.appendChild(block.Strich[i])
-    }
-  
-
-
-
-    for (i = 0; i < 2; i++) {
-
-        block.Strich[i + 3] = new BlockN({ 
-          x: 0, y: i * block.s.hoehe / 2 + 4 
-        }, { hoehe: block.s.hoehe / 2 - 5, breite: 3 }, "white")
-        block.appendChild(block.Strich[i + 3])
-        block.Strich[i + 5] = new BlockN({ 
-          x: block.s.breite - 3, y: i * block.s.hoehe / 2 + 4 
-          }, { hoehe: block.s.hoehe / 2 - 5, breite: 3 
-          }, "white")
-        block.appendChild(block.Strich[i + 5])
-    }
+  for (i = 0; i < 2; i++) {
+    block.Strich[i + 3] = new BlockNeu({ 
+      x: 0, y: i * block.s.hoehe / 2 + 4 
+    }, { hoehe: block.s.hoehe / 2 - 5, breite: 3 }, "white")
+    block.appendChild(block.Strich[i + 3])
+    block.Strich[i + 5] = new BlockNeu({ 
+      x: block.s.breite - 3, y: i * block.s.hoehe / 2 + 4 
+      }, { hoehe: block.s.hoehe / 2 - 5, breite: 3 
+      }, "white")
+    block.appendChild(block.Strich[i + 5])
+  }
   
 
 
@@ -384,12 +371,12 @@ var Segmente=new Array(
 
     NeueRunde = function() {
       starteSpiel()
-      Ball.p = { x: 345, y: 170};
-         Ball.v = { x: 3, y: 3};
-      Timer = new TimerNeu(20, update);
+      Ball.p = { x: 345, y: 170}
+      Ball.v = { x: 3, y: 3}
+      Timer = new TimerNeu(20, update)
     }
 
-</script>
+  </script>
 </head>
 
 
@@ -399,7 +386,7 @@ var Segmente=new Array(
  <body>
    <br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br>
 
-   <TABLE BORDER=5 bgcolor=green>
+   <TABLE BORDER=10 bgcolor=green>
      <TR align=center>
        <TD><font color=white></TD>
        <TD><font color=white>Steuerung</TD>  
