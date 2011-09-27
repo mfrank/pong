@@ -7,7 +7,7 @@
         
         start = function(){
           SpielfeldAufbauen()
-          handleDocumentKeyEvents()
+          handleDocumentKeyboardEvents()
           connectToServer()
         }
 
@@ -110,55 +110,71 @@
         schlaegerErstellen()
       }
 
-
-
-
-BlockN = function(position, size, c) {
-    var block = document.createElement("div")
-    block.style.position = "absolute"
-    block.style.width = size.breite + 'px'
-    block.style.height = size.hoehe + 'px'
-    block.style.top = position.y + 'px'
-    block.style.left = position.x + 'px'
-    block.style.backgroundColor = c
-    return block
-}
-
-
-feldErstellen = function(){
-      Feld = new FeldNeu({ hoehe: hoehe, breite: breite });
-      document.body.appendChild(Feld);
+      feldErstellen = function(){
+        Feld = new FeldNeu({ hoehe: hoehe, breite: breite });
+        document.body.appendChild(Feld);
       }
 
-FeldNeu = function(size) {
-    var block = new BlockN({ x: 15, y: 15 }, size, "green")
-    return block
-}
-
-
-  netzErstellen = function(){
-      Netz = new NetzNeu({                                    
-        x: breite / 2, y: 0
-      }, {
-        hoehe: hoehe,              
-        breite: 2
-      }, 40);
-      Feld.appendChild(Netz);
+      FeldNeu = function(size) {
+        var block = new BlockN({ x: 15, y: 15 }, size, "green")
+        return block
       }
 
-  NetzNeu = function(position, size, nodash) {                 
-      block = new BlockN(position, size, "green")
-      block.p = position
-      block.s = size
-      for (i = 0; i < nodash; i++) {
+      netzErstellen = function(){
+        Netz = new NetzNeu({                                    
+          x: breite / 2, y: 0
+        }, {
+         hoehe: hoehe,              
+          breite: 2
+        }, 40);
+        Feld.appendChild(Netz);
+      }
 
+      NetzNeu = function(position, size, nodash) {                 
+        block = new BlockN(position, size, "green")
+        block.p = position
+        block.s = size
+        
+        for (i = 0; i < nodash; i++) {
           Strich = new BlockN({ x: 0, y: i * 2 * block.s.hoehe / (2*nodash) }, { hoehe: size.hoehe / (2 * nodash), breite: size.breite }, "white")
           block.appendChild(Strich)
+        }
+        return block;
+      };
+      trefferanzeigeErstellen = function(){
+        linkeAnzeigeWirdErstellt()
+        rechteAnzeigeWirdErstellt()
       }
-      return block;
-  };
+        
+      linkeAnzeigeWirdErstellt = function(){  
+        AnzeigeL = new AnzeigeNeu({ x: breite / 4, y: 5 }, { breite: 20, hoehe: 40 })
+        AnzeigeL.setValue(0)
+        Feld.appendChild(AnzeigeL)
+      }
+      
+      rechteAnzeigeWirdErstellt = function(){
+        AnzeigeR = new AnzeigeNeu({ x: 3 * breite / 4, y: 5 }, { breite: 20, hoehe: 40 });
+        AnzeigeR.setValue(0);
+        Feld.appendChild(AnzeigeR);
+      }
 
-  ballErstellen = function(){
+    BlockN = function(position, size, c) {
+      var block = document.createElement("div")
+      block.style.position = "absolute"
+      block.style.width = size.breite + 'px'
+      block.style.height = size.hoehe + 'px'
+      block.style.top = position.y + 'px'
+      block.style.left = position.x + 'px'
+      block.style.backgroundColor = c
+      return block
+    }
+
+
+    
+
+    
+
+    ballErstellen = function(){
       Ball = new BallNeu({                     
         x: 345, y: 170
       }, {
@@ -166,23 +182,20 @@ FeldNeu = function(size) {
         y: 2
       }, 10)
 
-    Feld.appendChild(Ball)
- 
-  }
+      Feld.appendChild(Ball)
+        
+    }
 
-BallNeu = function(position, velocity, radius) {
-    block = new BlockN(position, { hoehe: radius, breite: radius }, "white")
-    block.p = position
-    block.v = velocity
-    block.r = radius
- block.move = function()
-      {
+    BallNeu = function(position, velocity, radius) {
+      block = new BlockN(position, { hoehe: radius, breite: radius }, "white")
+      block.p = position
+      block.v = velocity
+      block.r = radius
+      block.move = function(){
         this.p.x += this.v.x                                
         this.p.y += this.v.y
         this.style.top = this.p.y + 'px'
         this.style.left = this.p.x + 'px'
-
-//Überprüfen, ob der Ball einen Spielfeldrand berührt
 
         this.play = 0
         if (this.p.x + this.r > parseInt(this.parentNode.style.width))
@@ -194,57 +207,56 @@ BallNeu = function(position, velocity, radius) {
         if (this.p.y < 0)
             this.v.y = -this.v.y
         return this.play
-    }
+      }
     return block
-}
+    }
 
 
-  schlaegerErstellen = function(){
-    SchlaegerLinks = new SchlaegerNeu({
-      x: 15,
-      y: (hoehe / 2 - 25)
-    }, {
-      hoehe: 75, breite: 15
-    });
-    Feld.appendChild(SchlaegerLinks);
+    schlaegerErstellen = function(){
+      SchlaegerLinks = new SchlaegerNeu({
+        x: 15,
+        y: (hoehe / 2 - 25)
+      }, {
+        hoehe: 75, breite: 15
+      })
+      Feld.appendChild(SchlaegerLinks)
 
-    SchlaegerRechts = new SchlaegerNeu({
+      SchlaegerRechts = new SchlaegerNeu({
         x: breite - 15 - 10,
         y: (hoehe / 2 - 30)
-    }, { hoehe: 75, breite: 15 });
-    Feld.appendChild(SchlaegerRechts);
-  }
+      }, {
+        hoehe: 75, breite: 15 
+      })
+      Feld.appendChild(SchlaegerRechts)
+    }
 
-  SchlaegerNeu = function(position, size) {
-    block = BlockN(position, size, "white")
-    block.p = position
-    block.s = size
-    block.move = function(d) {
+    SchlaegerNeu = function(position, size) {
+      block = BlockN(position, size, "white")
+      block.p = position
+      block.s = size
+      block.move = function(d) {
         this.p.y += d
         this.style.top = this.p.y + 'px'
-    }
+      }
 
-//Methode, die überprüft, ob der Schläger den Ball trifft
-
-    block.trifft = function(B) 
-      {
+      block.trifft = function(B){
         if (((B.p.x + B.r) >= this.p.x) && (B.p.x <= (this.p.x + this.s.breite))) {
-            if (B.p.y >= this.p.y && B.p.y <= (this.p.y + this.s.hoehe)) {
-                B.v.x = -B.v.x;
-            }
+          if (B.p.y >= this.p.y && B.p.y <= (this.p.y + this.s.hoehe)) {
+            B.v.x = -B.v.x;
+          }
         }
-    }
-    return block;
-};
-
-TimerNeu = function(tick, code) {
-    this.timer = window.setInterval(code, tick);
-    this.clearTimer = function() {
-        window.clearInterval(this.timer)
+      }
+      return block;
     };
-}
 
-update = function() {                        //Ball bewegt sich, überprüfen, ob der Ball im Spiel ist und ob ein Schläger den Ball trifft
+    TimerNeu = function(tick, code) {
+      this.timer = window.setInterval(code, tick);
+      this.clearTimer = function() {
+        window.clearInterval(this.timer)
+      };
+    }
+
+update = function() {                       
     var zustand = Ball.move();                  
     if (zustand != 0)
      {
@@ -254,7 +266,7 @@ update = function() {                        //Ball bewegt sich, überprüfen, o
         } else {
             AnzeigeR.setValue(AnzeigeR.value + 1);
         }
-        if (AnzeigeL.value == 9 || AnzeigeR.value == 9) {            //wenn ein Spieler 9 Punkte erreicht hat, endet das Spiel
+        if (AnzeigeL.value == 9 || AnzeigeR.value == 9) {
             Timer.clearTimer()
        } else {
            
@@ -298,51 +310,47 @@ update = function() {                        //Ball bewegt sich, überprüfen, o
     }
 }
 
-handleDocumentKeyEvents = function(){
+handleDocumentKeyboardEvents = function(){
   document.onkeypress = ErkennenDerTasten
 }
 
 
- trefferanzeigeErstellen = function(){
-    AnzeigeL = new AnzeigeN({ x: breite / 4, y: 5 }, { breite: 20, hoehe: 40 });
-    AnzeigeL.setValue(0);
-    Feld.appendChild(AnzeigeL);
-    AnzeigeR = new AnzeigeN({ x: 3 * breite / 4, y: 5 }, { breite: 20, hoehe: 40 });
-    AnzeigeR.setValue(0);
-    Feld.appendChild(AnzeigeR);
-  }
+  
 
-AnzeigeN = function(position, size) {
-    block = new BlockN(position, size, "green");
-    block.p = position;
-    block.s = size;
-    block.score = 0;
-    block.Strich = [];
- 
-//Erstellen der horizontalen Striche
+AnzeigeNeu = function(position, size) {
+  block = new BlockN(position, size, "green")
+  block.p = position
+  block.s = size
+  block.score = 0
+  block.Strich = []
+  
+ // horizontaleLinienSegmentanzeige()
+ // vertikaleLinienSegmentanzeige()
+ // segmenteArray()
 
-   for (i = 0; i < 3; i++) {
-        block.Strich[i] = new BlockN({ x: 1, y: (i * block.s.hoehe / 2) }, { hoehe: 3, breite: block.s.breite - 2 }, "white");
-        block.appendChild(block.Strich[i]);
+
+  
+    for (i = 0; i < 3; i++) {
+      block.Strich[i] = new BlockN({ x: 1, y: (i * block.s.hoehe / 2) }, { hoehe: 3, breite: block.s.breite - 2 }, "white")
+      block.appendChild(block.Strich[i])
     }
+  
 
-//Erstellen der vertikalen Striche
+
 
     for (i = 0; i < 2; i++) {
 
         block.Strich[i + 3] = new BlockN({ 
           x: 0, y: i * block.s.hoehe / 2 + 4 
-        }, { hoehe: block.s.hoehe / 2 - 5, breite: 3 }, "white");
-        block.appendChild(block.Strich[i + 3]);
+        }, { hoehe: block.s.hoehe / 2 - 5, breite: 3 }, "white")
+        block.appendChild(block.Strich[i + 3])
         block.Strich[i + 5] = new BlockN({ 
           x: block.s.breite - 3, y: i * block.s.hoehe / 2 + 4 
           }, { hoehe: block.s.hoehe / 2 - 5, breite: 3 
-          }, "white");
-        block.appendChild(block.Strich[i + 5]);
+          }, "white")
+        block.appendChild(block.Strich[i + 5])
     }
-
-
-
+  
 
 
 var Segmente=new Array(
@@ -358,10 +366,11 @@ var Segmente=new Array(
       [0, 1, 3, 5, 6]);
     block.setValue = function(value) {
         this.value = value;
-
+        
         for (i = 0; i < 7; i++) {
             this.Strich[i].style.backgroundColor = "green";
         }
+
         for (i in Segmente[value]) {
             this.Strich[Segmente[value][i]].style.backgroundColor = "white"
         }
@@ -369,10 +378,8 @@ var Segmente=new Array(
     }
 
     return block;
-};
 
-
-
+}
 
 
     NeueRunde = function() {
@@ -394,8 +401,8 @@ var Segmente=new Array(
 
    <TABLE BORDER=5 bgcolor=green>
      <TR align=center>
-       <TD><font color=white>Steuerung</TD>
-       <TD><font color=white>Spieler 1</TD>  
+       <TD><font color=white></TD>
+       <TD><font color=white>Steuerung</TD>  
      </TR>
      <TR align=center>
        <TD><font color=white>Nach oben</TD>
