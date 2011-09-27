@@ -1,7 +1,7 @@
 <html>
    <head>
       <title>Pong</title>
-    
+      <div id='playerInfo'></div>
       <script src="/socket.io/socket.io.js"></script>
       <script>
         
@@ -59,7 +59,7 @@
           player = playerNumber
           console.log('Du bist Spieler '+ player)
           
-          setText('playerInfo', playerNumber)
+          setText('playerInfo', 'Du bist Spieler ' +playerNumber)
         }
 
         setText = function(tagId, text){
@@ -125,7 +125,7 @@
       }
 
       FeldNeu = function(size) {
-        var block = new BlockNeu({ x: 15, y: 15 }, size, "green")
+        var block = new BlockNeu({ x: 15, y: 35 }, size, "green")
         return block
       }
 
@@ -214,8 +214,8 @@
     return block
     }
 
-    var spielfeldRand = 15
-    var schlaegerBreite = 10
+    var spielfeldRand = 10
+    var schlaegerBreite = 15
 
     schlaegerErstellen = function(){      
       linkerSchlaegerWirdErstellt()
@@ -270,12 +270,7 @@
       return block;
     };
 
-    TimerNeu = function(tick, code) {
-      this.timer = window.setInterval(code, tick);
-      this.clearTimer = function() {
-        window.clearInterval(this.timer)
-      }
-    }
+    
 
 update = function() {                       
     var zustand = Ball.move()                  
@@ -306,15 +301,15 @@ update = function() {
 }
 
   ErkennenDerTasten = function(e) {                                        
-    var e = window.event ? event : e;
+   
 
     if (e.keyCode) { key = e.keyCode; }
     else if (typeof (e.which) != 'undefined') { key = e.which; }
 
-    abfrageDerTasten()
+    handlePaddle()
   }
 
-    abfrageDerTasten = function(){
+    handlePaddle = function(){
 
       if (player == 1){
         switch (key) {       
@@ -414,6 +409,13 @@ var Segmente=new Array(
       Timer = new TimerNeu(20, update)
     }
 
+    TimerNeu = function(tick, code) {
+      this.timer = window.setInterval(code, tick);
+      this.clearTimer = function() {
+        window.clearInterval(this.timer)
+      }
+    }
+
   </script>
 </head>
  <body>
@@ -432,7 +434,5 @@ var Segmente=new Array(
        <TD><font color=white>S</TD>
      </TR>
    </TABLE>
-
-   <div id='playerInfo'></div>
  </body>
 </html>
