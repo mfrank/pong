@@ -47,12 +47,29 @@
         handleServerAcceptedEvent = function(s){
          
           s.on('accepted', function (data) {
-            console.log('Du bist Spieler '+data.player)
-            player = data.player
+            
+            setCurrentUserToBePlayerNumber(data.player)
+
           });
 
         }
       
+        setCurrentUserToBePlayerNumber = function(playerNumber) {
+
+          player = playerNumber
+          console.log('Du bist Spieler '+ player)
+          
+          setText('playerInfo', playerNumber)
+        }
+
+        setText = function(tagId, text){
+
+          var element = document.getElementById(tagId)
+          element.innerHTML = text
+
+        }
+
+
         handleOtherPlayerMoveEvent = function(s){
           
           s.on('move', function (data){
@@ -288,6 +305,7 @@ update = function() {
 
   ErkennenDerTasten = function(e) {                                        
     var e = window.event ? event : e;
+
     if (e.keyCode) { key = e.keyCode; }
     else if (typeof (e.which) != 'undefined') { key = e.which; }
 
@@ -295,32 +313,26 @@ update = function() {
   }
 
     abfrageDerTasten = function(){
+
       if (player == 1){
         switch (key) {       
           case (32):                                        
             NeueRunde()
             break
-          case (115):                                   
-            SchlaegerLinks.move(10)                         
-            sendDown()
-            break
-          case (119):                                   
-            SchlaegerLinks.move(-10)                        
-            sendUp()
-            break 
         }
       }
-      if (player == 2){
-        switch (key) {
-          case (115):                                       
-            SchlaegerRechts.move(10)                          
-            sendDown()
-            break
-          case (119):                                       
-            SchlaegerRechts.move(-10)                              
-            sendUp()
-            break
-          }
+
+      var schlaeger = player == 1 ? SchlaegerLinks:SchlaegerRechts
+
+      switch (key) {       
+        case (115):                                   
+          schlaeger.move(10)                         
+          sendDown()
+          break
+        case (119):                                   
+          schlaeger.move(-10)                        
+          sendUp()
+          break     
       }
     }
 
@@ -402,5 +414,7 @@ var Segmente=new Array(
        <TD><font color=white>S</TD>
      </TR>
    </TABLE>
+
+   <div id='playerInfo'></div>
  </body>
 </html>
