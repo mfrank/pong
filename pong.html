@@ -74,15 +74,10 @@
           
           s.on('move', function (data){
           
-            switch (data.direction){
-              case 'up':
-              SchlaegerLinks.move(-10); 
-              break
+            var otherPlayerNumber = player == 1 ? 2 : 1
 
-              case 'down':
-              SchlaegerLinks.move(10); 
-              break
-            }
+            MovePlayerPaddle( otherPlayerNumber, data.direction)
+            
           })
         }
 
@@ -98,17 +93,11 @@
            socket.emit('start')
           }
         }
-
-        sendUp = function(){
-          console.log('up')
-          socket.emit('move', { direction: 'up', player:player});
+               
+        sendMovementToOtherPlayer = function(direction){
+          console.log(direction)
+          socket.emit('move', { direction: direction, player:player});
         }
-
-        sendDown = function(){
-          console.log('down')
-          socket.emit('move', { direction: 'down', player:player});
-        }
-       
 
 
         var hoehe = 350
@@ -225,6 +214,8 @@
     return block
     }
 
+    var spielfeldRand = 15
+    var schlaegerBreite = 10
 
     schlaegerErstellen = function(){      
       linkerSchlaegerWirdErstellt()
@@ -232,21 +223,32 @@
     }
 
     linkerSchlaegerWirdErstellt = function(){
-      SchlaegerLinks = new SchlaegerNeu({
-        x: 15, y: (hoehe / 2 - 25)
-      }, {
-        hoehe: 75, breite: 15
-      })
-      Feld.appendChild(SchlaegerLinks)
+      
+      SchlaegerLinks = erstelleSchlaeger(spielfeldRand)
+
     }
     
     rechterSchlaegerWirdErstellt = function(){
-      SchlaegerRechts = new SchlaegerNeu({
-        x: breite - 15 - 10, y: (hoehe / 2 - 30)
-      }, {
-        hoehe: 75, breite: 15 
-      })
-      Feld.appendChild(SchlaegerRechts)
+
+      var positionRechtsAmRand = breite - schlaegerBreite - spielfeldRand
+
+      SchlaegerRechts = erstelleSchlaeger(positionRechtsAmRand)
+    }
+
+    erstelleSchlaeger = function(x){
+
+      var schlaeger = new SchlaegerNeu(
+        {
+          x: x, y: (hoehe / 2 - 30)
+        },
+        {
+          hoehe: 75, breite: 15 
+        }
+      )
+
+      Feld.appendChild(schlaeger)
+
+      return schlaeger
     }
 
     SchlaegerNeu = function(position, size) {
@@ -322,18 +324,34 @@ update = function() {
         }
       }
 
-      var schlaeger = player == 1 ? SchlaegerLinks:SchlaegerRechts
+      var direction
 
       switch (key) {       
         case (115):                                   
-          schlaeger.move(10)                         
-          sendDown()
+          direction = 'down'
           break
         case (119):                                   
+          direction = 'up'
+          break  
+      }  
+
+      sendMovementToOtherPlayer(direction)
+
+      MovePlayerPaddle(player, direction)
+    }
+
+    MovePlayerPaddle = function(playerNumber, direction){
+      
+      var schlaeger = playerNumber == 1 ? SchlaegerLinks:SchlaegerRechts
+
+      switch (direction) {       
+        case 'down':                                   
+          schlaeger.move(10)                                  
+          break
+        case 'up':                                   
           schlaeger.move(-10)                        
-          sendUp()
-          break     
-      }
+          break  
+      }  
     }
 
 handleDocumentKeyboardEvents = function(){
