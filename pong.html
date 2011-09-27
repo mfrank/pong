@@ -9,7 +9,6 @@
           SpielfeldAufbauen()
           handleDocumentKeyEvents()
           connectToServer()
-
         }
 
         window.onload = start
@@ -71,7 +70,6 @@
           })
         }
 
-
         starteSpiel = function(){
           if (player == 1){
            console.log('Das Spiel startet')
@@ -91,65 +89,26 @@
        
 
 
- var hoehe = 350;
- var breite = 700;                    
-  
+  var hoehe = 350;
+  var breite = 700;                    
+  var size = {
+    hoehe: 75, breite: 15
+  }
+
     SpielfeldAufbauen = function() {
-      Feld = new FeldNeu({ hoehe: hoehe, breite: breite });
-      document.body.appendChild(Feld);
+      rahmenDesSpielfeldes()
+      schlaegerUndBall()
+    }
 
-      Netz = new NetzNeu({                                    
-        x: breite / 2,                           
-        y: 0
-      }, {
-        hoehe: hoehe,              
-        breite: 2
-      }, 40);
-      Feld.appendChild(Netz);
-    
-      Ball = new BallNeu({			               
-        x: 345,
-        y: 170
-      }, {
-        x: -2,
-        y: 2
-      }, 10);
-
-    Feld.appendChild(Ball);
- 
-    
-
-    var size = 
-      {
-        hoehe: 75,
-        breite: 15
-      };
-
-    SchlaegerLinks = new SchlaegerNeu({
-      x: 15,
-      y: (hoehe / 2 - 25)
-    }, {
-      hoehe: 75, breite: 15
-    });
-    Feld.appendChild(SchlaegerLinks);
-
-    SchlaegerRechts = new SchlaegerNeu({
-        x: breite - 15 - 10,
-        y: (hoehe / 2 - 30)
-    }, { hoehe: 75, breite: 15 });
-    Feld.appendChild(SchlaegerRechts);
-
-//Es werden zwei Anzeigen für die Treffer erstellt
-
-    AnzeigeL = new AnzeigeN({ x: breite / 4, y: 5 }, { breite: 20, hoehe: 40 });
-    AnzeigeL.setValue(0);
-    Feld.appendChild(AnzeigeL);
-    AnzeigeR = new AnzeigeN({ x: 3 * breite / 4, y: 5 }, { breite: 20, hoehe: 40 });
-    AnzeigeR.setValue(0);
-    Feld.appendChild(AnzeigeR);
-
-    
-}
+      rahmenDesSpielfeldes = function(){
+        feldErstellen()
+        netzErstellen()
+        trefferanzeigeErstellen()
+      }
+      schlaegerUndBall = function(){
+        ballErstellen()
+        schlaegerErstellen()
+      }
 
 
 //Spielfeld wird erstellt
@@ -165,28 +124,51 @@ BlockN = function(position, size, c) {
     return block
 }
 
-//Farbe des Spielfeldes und Koordinaten für Aufbau
+
+feldErstellen = function(){
+      Feld = new FeldNeu({ hoehe: hoehe, breite: breite });
+      document.body.appendChild(Feld);
+      }
 
 FeldNeu = function(size) {
     var block = new BlockN({ x: 15, y: 15 }, size, "green")
     return block
 }
 
-//Eigenschaften des Netzes, "gepunktete" Linie
 
-NetzNeu = function(position, size, nodash) {                 
-    block = new BlockN(position, size, "green")
-    block.p = position
-    block.s = size
-    for (i = 0; i < nodash; i++) {
+  netzErstellen = function(){
+      Netz = new NetzNeu({                                    
+        x: breite / 2, y: 0
+      }, {
+        hoehe: hoehe,              
+        breite: 2
+      }, 40);
+      Feld.appendChild(Netz);
+      }
 
-        Strich = new BlockN({ x: 0, y: i * 2 * block.s.hoehe / (2*nodash) }, { hoehe: size.hoehe / (2 * nodash), breite: size.breite }, "white")
-        block.appendChild(Strich)
-    }
-    return block;
-};
+  NetzNeu = function(position, size, nodash) {                 
+      block = new BlockN(position, size, "green")
+      block.p = position
+      block.s = size
+      for (i = 0; i < nodash; i++) {
 
+          Strich = new BlockN({ x: 0, y: i * 2 * block.s.hoehe / (2*nodash) }, { hoehe: size.hoehe / (2 * nodash), breite: size.breite }, "white")
+          block.appendChild(Strich)
+      }
+      return block;
+  };
 
+  ballErstellen = function(){
+      Ball = new BallNeu({                     
+        x: 345, y: 170
+      }, {
+        x: -2,
+        y: 2
+      }, 10)
+
+    Feld.appendChild(Ball)
+ 
+  }
 
 BallNeu = function(position, velocity, radius) {
     block = new BlockN(position, { hoehe: radius, breite: radius }, "white")
@@ -217,7 +199,23 @@ BallNeu = function(position, velocity, radius) {
 }
 
 
-SchlaegerNeu = function(position, size) {
+  schlaegerErstellen = function(){
+    SchlaegerLinks = new SchlaegerNeu({
+      x: 15,
+      y: (hoehe / 2 - 25)
+    }, {
+      hoehe: 75, breite: 15
+    });
+    Feld.appendChild(SchlaegerLinks);
+
+    SchlaegerRechts = new SchlaegerNeu({
+        x: breite - 15 - 10,
+        y: (hoehe / 2 - 30)
+    }, { hoehe: 75, breite: 15 });
+    Feld.appendChild(SchlaegerRechts);
+  }
+
+  SchlaegerNeu = function(position, size) {
     block = BlockN(position, size, "white")
     block.p = position
     block.s = size
@@ -305,7 +303,14 @@ handleDocumentKeyEvents = function(){
 }
 
 
-//Der Punktestand soll in einer 7-Segment-Anzeige angezeigt werden, dazu werden 7 Objekte erstellt
+ trefferanzeigeErstellen = function(){
+    AnzeigeL = new AnzeigeN({ x: breite / 4, y: 5 }, { breite: 20, hoehe: 40 });
+    AnzeigeL.setValue(0);
+    Feld.appendChild(AnzeigeL);
+    AnzeigeR = new AnzeigeN({ x: 3 * breite / 4, y: 5 }, { breite: 20, hoehe: 40 });
+    AnzeigeR.setValue(0);
+    Feld.appendChild(AnzeigeR);
+  }
 
 AnzeigeN = function(position, size) {
     block = new BlockN(position, size, "green");
