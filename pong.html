@@ -5,22 +5,20 @@
       <script src="/socket.io/socket.io.js"></script>
       <script>
         
-        start = function(){
-          SpielfeldAufbauen()
-          handleDocumentKeyboardEvents()
-          connectToServer()
+      start = function(){
+        SpielfeldAufbauen()
+        handleDocumentKeyboardEvents()
+        connectToServer()
+      }
 
-        }
-
-        window.onload = start
+      window.onload = start
 
       </script>
       <script>
 
-
-
-    var player
-    var socket
+      var player
+      var socket
+      
       connectToServer = function(){
         
         console.log('connecting to server ...')
@@ -65,15 +63,14 @@
 
       handleOtherPlayerTriggeredStartEvent = function(s){
         s.on('start', function (){
-            NeueRunde()             
+            startRound()           
         })
       }
 
-      starteSpiel = function(){
-        if (player == 1){
+      startGame = function(){
+         startRound() 
          console.log('Das Spiel startet')
          socket.emit('start')
-        }
       }
              
       sendMovementToOtherPlayer = function(direction){
@@ -296,7 +293,7 @@
             Timer.clearTimer()
           }
           else {
-            NeueRunde()
+            startRound()
           }
         }
 
@@ -311,13 +308,14 @@
         handlePaddleEvent()
       }
 
+      var startOnceOnly = 0
       handlePaddleEvent = function(){
-
-        if (player == 1){
+        if (player == 1 && startOnceOnly == 0){
           switch (key) {       
-            case (32):    
-              direction = 'start'                                    
-              NeueRunde()
+            case (32):  
+              direction = 'start'
+              startGame()
+              startOnceOnly = 1
               break
           }
         }
@@ -396,33 +394,33 @@
           [0, 1, 2, 3, 4, 5, 6],
           [0, 1, 3, 5, 6])
 
-      block.setValue = function(value) {
-        this.value = value        
-        for (i = 0; i < 7; i++) {
-          this.Strich[i].style.backgroundColor = "green"
+        block.setValue = function(value) {
+          this.value = value        
+          for (i = 0; i < 7; i++) {
+            this.Strich[i].style.backgroundColor = "green"
+          }
+          for (i in Segmente[value]) {
+            this.Strich[Segmente[value][i]].style.backgroundColor = "white"
+          }
         }
-        for (i in Segmente[value]) {
-          this.Strich[Segmente[value][i]].style.backgroundColor = "white"
+      return block;
+      }
+
+      startRound = function() {
+      
+        Ball.p = { x: 345, y: 170}
+        Ball.v = { x: 3, y: 3}
+        Timer = new TimerNeu(20, update)
+      }
+
+      TimerNeu = function(tick, code) {
+        this.timer = window.setInterval(code, tick);
+        this.clearTimer = function() {
+          window.clearInterval(this.timer)
         }
       }
-    return block;
-    }
 
-    NeueRunde = function() {
-      starteSpiel()
-      Ball.p = { x: 345, y: 170}
-      Ball.v = { x: 3, y: 3}
-      Timer = new TimerNeu(20, update)
-    }
-
-    TimerNeu = function(tick, code) {
-      this.timer = window.setInterval(code, tick);
-      this.clearTimer = function() {
-        window.clearInterval(this.timer)
-      }
-    }
-
-   </script>
+    </script>
   </head>
   <body>
    <br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br>
