@@ -1,26 +1,25 @@
-var app = require('http').createServer(handler)
-  , io = require('socket.io').listen(app)
-  , fs = require('fs')
+var express = require('express')
+var fs = require('fs')
 
+var app = express.createServer()
+//var io = require('socket.io').listen(app)
+
+//app.use(express.static(__dirname));
+app.use(express.logger())
 app.listen(8080)
 
-function handler (req, res) {
-  fs.readFile(__dirname + '/pong.html',
-    function (err, data) {
-      if (err) {
-        res.writeHead(500)
-        return res.end('Error loading pong.html')
-      }
-      res.writeHead(200)
-      res.end(data);
-    })
-}
+app.get('/', function (req, res) {
+   console.log(req)
+   
+  res.sendfile(__dirname + '/pong.html');
+})
+
 
 var playerA = null
 var playerB = null
 
-io.set('log level',1)
-io.sockets.on('connection', function (socket) {
+//io.set('log level',1)
+/*io.sockets.on('connection', function (socket) {
   
   if(playerA === null)
   {
@@ -69,4 +68,4 @@ io.sockets.on('connection', function (socket) {
     }
     });   
   }
-});
+});*/

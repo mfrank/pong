@@ -236,6 +236,8 @@
         SchlaegerRechts = erstelleSchlaeger(positionRechtsAmRand)
       }
 
+      var schlaeger
+
       erstelleSchlaeger = function(x){
 
         var schlaeger = new SchlaegerNeu(
@@ -256,22 +258,28 @@
         block = BlockNeu(position, size, "white")
         block.p = position
         block.s = size
+       
+      
         block.move = function(d) {
-          this.p.y += d
-          this.style.top = this.p.y + 'px'
+         
+            this.p.y += d
+            this.style.top = this.p.y + 'px'
+          
+         
         }
 
-      block.trifft = function(B){
-        if (((B.p.x + B.r) >= this.p.x) && (B.p.x <= (this.p.x + this.s.breite))) {
-          if (B.p.y >= this.p.y && B.p.y <= (this.p.y + this.s.hoehe)) {
-            B.v.x = -B.v.x
+
+        block.trifft = function(B){
+          if (((B.p.x + B.r) >= this.p.x) && (B.p.x <= (this.p.x + this.s.breite))) {
+            if (B.p.y >= this.p.y && B.p.y <= (this.p.y + this.s.hoehe)) {
+              B.v.x = -B.v.x
+            }
           }
         }
-      }
       return block;
       }
 
-    
+      
 
       update = function() {                       
         var zustand = Ball.move()                  
@@ -283,22 +291,19 @@
           } else {
             AnzeigeR.setValue(AnzeigeR.value + 1);
           }
-
-          pruefeObSpielerGewonnenHat()
-
-          
+          pruefeObSpielerGewonnenHat()         
         }
-        pruefeObSpielerGewonnenHat = function(){
-          if (AnzeigeL.value == 9 || AnzeigeR.value == 9) {
-            Timer.clearTimer()
-          }
-          else {
-            startRound()
-          }
-        }
-
         SchlaegerLinks.trifft(Ball);
         SchlaegerRechts.trifft(Ball);
+      }
+
+      pruefeObSpielerGewonnenHat = function(){
+        if (AnzeigeL.value == 9 || AnzeigeR.value == 9) {
+          Timer.clearTimer()
+        }
+        else {
+          startRound()
+        }
       }
 
       handleGamestartEvent = function(e) {                                    
@@ -410,10 +415,10 @@
       
         Ball.p = { x: 345, y: 170}
         Ball.v = { x: 3, y: 3}
-        Timer = new TimerNeu(20, update)
+        Timer = new startTimer(20, update)
       }
 
-      TimerNeu = function(tick, code) {
+      startTimer = function(tick, code) {
         this.timer = window.setInterval(code, tick);
         this.clearTimer = function() {
           window.clearInterval(this.timer)
