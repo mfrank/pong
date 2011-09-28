@@ -2,11 +2,7 @@ var express = require('express')
 var fs = require('fs')
 
 var app = express.createServer()
-//var io = require('socket.io').listen(app)
-
-//app.use(express.static(__dirname));
-app.use(express.logger())
-app.listen(8080)
+var io = require('socket.io').listen(app)
 
 app.get('/', function (req, res) {
    console.log(req)
@@ -14,12 +10,18 @@ app.get('/', function (req, res) {
   res.sendfile(__dirname + '/pong.html');
 })
 
+app.use(express.static(__dirname));
+app.use(express.logger())
+
+
+
+app.listen(8080)
 
 var playerA = null
 var playerB = null
 
-//io.set('log level',1)
-/*io.sockets.on('connection', function (socket) {
+io.set('log level',1)
+io.sockets.on('connection', function (socket) {
   
   if(playerA === null)
   {
@@ -68,4 +70,4 @@ var playerB = null
     }
     });   
   }
-});*/
+});
