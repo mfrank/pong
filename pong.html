@@ -17,106 +17,84 @@
       </script>
       <script>
 
-      </script>
-      <script>
 
 
-
-        var player
-        var socket
-
-        connectToServer = function(){
+    var player
+    var socket
+      connectToServer = function(){
+        
+        console.log('connecting to server ...')
+        socket = createSocketConnectingToServer()          
+        startListeningToEventsFromServer(socket)
+      }
+      createSocketConnectingToServer = function(){
+        return io.connect('http://192.168.1.157:8080')
+      }
+      startListeningToEventsFromServer = function(s){
+        handleServerAcceptedEvent(s)
+        handleOtherPlayerMoveEvent(s)
+        handleOtherPlayerTriggeredStartEvent(s)
+      }
+      handleServerAcceptedEvent = function(s){
+       
+        s.on('accepted', function (data) {
           
-          console.log('connecting to server ...')
-
-          socket = createSocketConnectingToServer()          
-
-          startListeningToEventsFromServer(socket)
-        }
-
-        createSocketConnectingToServer = function(){
-          return io.connect('http://192.168.1.157:8080')
-        }
-
-        startListeningToEventsFromServer = function(s){
-          handleServerAcceptedEvent(s)
-          handleOtherPlayerMoveEvent(s)
-          handleOtherPlayerTriggeredStartEvent(s)
-        }
-
-        handleServerAcceptedEvent = function(s){
-         
-          s.on('accepted', function (data) {
-            
-            setCurrentUserToBePlayerNumber(data.player)
-
-          });
-
-        }
+          setCurrentUserToBePlayerNumber(data.player)
+        });
+      }
       
-        setCurrentUserToBePlayerNumber = function(playerNumber) {
-
-          player = playerNumber
-          console.log('Du bist Spieler '+ player)
+      setCurrentUserToBePlayerNumber = function(playerNumber) {
+        player = playerNumber
+        console.log('Du bist Spieler '+ player)
+        
+        setText('playerInfo', 'Du bist Spieler ' +playerNumber)
+      }
+      setText = function(tagId, text){
+        var element = document.getElementById(tagId)
+        element.innerHTML = text
+      }
+      handleOtherPlayerMoveEvent = function(s){
+        
+        s.on('move', function (data){
+        
+          var otherPlayerNumber = player == 1 ? 2 : 1
+          MovePlayerPaddle( otherPlayerNumber, data.direction)
           
-          setText('playerInfo', 'Du bist Spieler ' +playerNumber)
+        })
+      }
+
+      handleOtherPlayerTriggeredStartEvent = function(s){
+        s.on('start', function (){
+            NeueRunde()             
+        })
+      }
+
+      starteSpiel = function(){
+        if (player == 1){
+         console.log('Das Spiel startet')
+         socket.emit('start')
         }
-
-        setText = function(tagId, text){
-
-          var element = document.getElementById(tagId)
-          element.innerHTML = text
-
-        }
-
-
-        handleOtherPlayerMoveEvent = function(s){
-          
-          s.on('move', function (data){
-          
-            var otherPlayerNumber = player == 1 ? 2 : 1
-
-            MovePlayerPaddle( otherPlayerNumber, data.direction)
-            
-          })
-        }
-
-        handleOtherPlayerTriggeredStartEvent = function(s){
-          s.on('start', function (){
-              NeueRunde()             
-          })
-        }
-
-        starteSpiel = function(){
-          if (player == 1){
-           console.log('Das Spiel startet')
-           socket.emit('start')
-          }
-        }
-               
-        sendMovementToOtherPlayer = function(direction){
-          console.log(direction)
-          socket.emit('move', { direction: direction, player:player});
-        }
+      }
+             
+      sendMovementToOtherPlayer = function(direction){
+        console.log(direction)
+        socket.emit('move', { direction: direction, player:player});
+      }
 
 
-        var hoehe = 350
-        var breite = 700                    
-        var size = { hoehe: 75, breite: 15 }
+      var hoehe = 350
+      var breite = 700                    
+      var size = { hoehe: 75, breite: 15 }
 
-        SpielfeldAufbauen = function() {
-          rahmenDesSpielfeldes()
-          schlaegerUndBall()
+      SpielfeldAufbauen = function() {
+        rahmenDesSpielfeldes()
+        schlaegerUndBall()
         }
 
       rahmenDesSpielfeldes = function(){
         feldErstellen()
         netzErstellen()
         trefferanzeigeErstellen()
-      }
-      schlaegerUndBall = function(){
-        ballErstellen()
-        schlaegerErstellen()
       }
 
       feldErstellen = function(){
@@ -148,259 +126,287 @@
           block.appendChild(Strich)
         }
         return block;
-      };
+      }
+
+
+      var linkeTafel = breite / 4
+      var rechteTafel = 3 * breite / 4
+
       trefferanzeigeErstellen = function(){
+       
         linkeAnzeigeWirdErstellt()
         rechteAnzeigeWirdErstellt()
       }
         
       linkeAnzeigeWirdErstellt = function(){  
-        AnzeigeL = new AnzeigeNeu({ x: breite / 4, y: 5 }, { breite: 20, hoehe: 40 })
-        AnzeigeL.setValue(0)
-        Feld.appendChild(AnzeigeL)
+        
+        AnzeigeL = erstelleAnzeige(linkeTafel)
       }
 
       rechteAnzeigeWirdErstellt = function(){
-        AnzeigeR = new AnzeigeNeu({ x: 3 * breite / 4, y: 5 }, { breite: 20, hoehe: 40 });
-        AnzeigeR.setValue(0);
-        Feld.appendChild(AnzeigeR);
+        
+        AnzeigeR = erstelleAnzeige(rechteTafel)
       }
 
-    BlockNeu = function(position, size, c) {
-      var block = document.createElement("div")
-      block.style.position = "absolute"
-      block.style.width = size.breite + 'px'
-      block.style.height = size.hoehe + 'px'
-      block.style.top = position.y + 'px'
-      block.style.left = position.x + 'px'
-      block.style.backgroundColor = c
-      return block
-    }
-
-
-    ballErstellen = function(){
-      Ball = new BallNeu({                     
-        x: 345, y: 170
-      }, {
-        x: -2,
-        y: 2
-      }, 10)
-
-      Feld.appendChild(Ball)
-    }
-
-    BallNeu = function(position, velocity, radius) {
-      block = new BlockNeu(position, { hoehe: radius, breite: radius }, "white")
-      block.p = position
-      block.v = velocity
-      block.r = radius
-      block.move = function(){
-        this.p.x += this.v.x                                
-        this.p.y += this.v.y
-        this.style.top = this.p.y + 'px'
-        this.style.left = this.p.x + 'px'
-
-        this.play = 0
-        if (this.p.x + this.r > parseInt(this.parentNode.style.width))
-            this.play = 1
-        if (this.p.x < 0)
-            this.play = 2
-        if (this.p.y + this.r > parseInt(this.parentNode.style.height))
-            this.v.y = -this.v.y
-        if (this.p.y < 0)
-            this.v.y = -this.v.y
-        return this.play
+      erstelleAnzeige = function(x){
+        var anzeige = new AnzeigeNeu(
+          {
+            x: x, y: 5
+          },
+          {
+            breite: 20, hoehe: 40
+          }
+        )
+        anzeige.setValue(0)
+        Feld.appendChild(anzeige)
+        return anzeige
       }
-    return block
-    }
 
-    var spielfeldRand = 10
-    var schlaegerBreite = 15
-
-    schlaegerErstellen = function(){      
-      linkerSchlaegerWirdErstellt()
-      rechterSchlaegerWirdErstellt()
-    }
-
-    linkerSchlaegerWirdErstellt = function(){
       
-      SchlaegerLinks = erstelleSchlaeger(spielfeldRand)
-
-    }
-    
-    rechterSchlaegerWirdErstellt = function(){
-
-      var positionRechtsAmRand = breite - schlaegerBreite - spielfeldRand
-
-      SchlaegerRechts = erstelleSchlaeger(positionRechtsAmRand)
-    }
-
-    erstelleSchlaeger = function(x){
-
-      var schlaeger = new SchlaegerNeu(
-        {
-          x: x, y: (hoehe / 2 - 30)
-        },
-        {
-          hoehe: 75, breite: 15 
-        }
-      )
-
-      Feld.appendChild(schlaeger)
-
-      return schlaeger
-    }
-
-    SchlaegerNeu = function(position, size) {
-      block = BlockNeu(position, size, "white")
-      block.p = position
-      block.s = size
-      block.move = function(d) {
-        this.p.y += d
-        this.style.top = this.p.y + 'px'
+      schlaegerUndBall = function(){
+        ballErstellen()
+        schlaegerErstellen()
       }
+
+
+
+      BlockNeu = function(position, size, c) {
+        var block = document.createElement("div")
+        block.style.position = "absolute"
+        block.style.width = size.breite + 'px'
+        block.style.height = size.hoehe + 'px'
+        block.style.top = position.y + 'px'
+        block.style.left = position.x + 'px'
+        block.style.backgroundColor = c
+        return block
+      }
+
+
+      ballErstellen = function(){
+        Ball = new BallNeu({                     
+          x: 345, y: 170
+        }, {
+          x: -2,
+          y: 2
+        }, 10)
+
+        Feld.appendChild(Ball)
+      }
+
+      BallNeu = function(position, velocity, radius) {
+        block = new BlockNeu(position, { hoehe: radius, breite: radius }, "white")
+        block.p = position
+        block.v = velocity
+        block.r = radius
+        block.move = function(){
+          this.p.x += this.v.x                                
+          this.p.y += this.v.y
+          this.style.top = this.p.y + 'px'
+          this.style.left = this.p.x + 'px'
+
+          this.play = 0
+          if (this.p.x + this.r > parseInt(this.parentNode.style.width))
+              this.play = 1
+          if (this.p.x < 0)
+              this.play = 2
+          if (this.p.y + this.r > parseInt(this.parentNode.style.height))
+              this.v.y = -this.v.y
+          if (this.p.y < 0)
+              this.v.y = -this.v.y
+          return this.play
+        }
+      return block
+      }
+
+      var spielfeldRand = 10
+      var schlaegerBreite = 15
+
+      schlaegerErstellen = function(){      
+        linkerSchlaegerWirdErstellt()
+        rechterSchlaegerWirdErstellt()
+      }
+
+      linkerSchlaegerWirdErstellt = function(){
+        
+        SchlaegerLinks = erstelleSchlaeger(spielfeldRand)
+
+      }
+      
+      rechterSchlaegerWirdErstellt = function(){
+
+        var positionRechtsAmRand = breite - schlaegerBreite - spielfeldRand
+
+        SchlaegerRechts = erstelleSchlaeger(positionRechtsAmRand)
+      }
+
+      erstelleSchlaeger = function(x){
+
+        var schlaeger = new SchlaegerNeu(
+          {
+            x: x, y: (hoehe / 2 - 30)
+          },
+          {
+            hoehe: 75, breite: 15 
+          }
+        )
+
+        Feld.appendChild(schlaeger)
+
+        return schlaeger
+      }
+
+      SchlaegerNeu = function(position, size) {
+        block = BlockNeu(position, size, "white")
+        block.p = position
+        block.s = size
+        block.move = function(d) {
+          this.p.y += d
+          this.style.top = this.p.y + 'px'
+        }
 
       block.trifft = function(B){
         if (((B.p.x + B.r) >= this.p.x) && (B.p.x <= (this.p.x + this.s.breite))) {
           if (B.p.y >= this.p.y && B.p.y <= (this.p.y + this.s.hoehe)) {
-            B.v.x = -B.v.x;
+            B.v.x = -B.v.x
           }
         }
       }
       return block;
-    };
+      }
 
     
 
-update = function() {                       
-    var zustand = Ball.move()                  
-    if (zustand != 0){
-        Timer.clearTimer()
+      update = function() {                       
+        var zustand = Ball.move()                  
+        if (zustand != 0){
+          Timer.clearTimer()
 
-        if (zustand == 1) {
-           AnzeigeL.setValue(AnzeigeL.value + 1);
-        } else {
+          if (zustand == 1) {
+            AnzeigeL.setValue(AnzeigeL.value + 1);
+          } else {
             AnzeigeR.setValue(AnzeigeR.value + 1);
           }
 
-        pruefeObSpielerGewonnenHat()
+          pruefeObSpielerGewonnenHat()
 
-        
-    }
-    pruefeObSpielerGewonnenHat = function(){
-    if (AnzeigeL.value == 9 || AnzeigeR.value == 9) {
+          
+        }
+        pruefeObSpielerGewonnenHat = function(){
+          if (AnzeigeL.value == 9 || AnzeigeR.value == 9) {
             Timer.clearTimer()
-       } else {
-           
-            NeueRunde();
-        }
-    }
-
-    SchlaegerLinks.trifft(Ball);
-    SchlaegerRechts.trifft(Ball);
-}
-
-  ErkennenDerTasten = function(e) {                                        
-   
-
-    if (e.keyCode) { key = e.keyCode; }
-    else if (typeof (e.which) != 'undefined') { key = e.which; }
-
-    handlePaddle()
-  }
-
-    handlePaddle = function(){
-
-      if (player == 1){
-        switch (key) {       
-          case (32):                                        
+          }
+          else {
             NeueRunde()
-            break
+          }
         }
+
+        SchlaegerLinks.trifft(Ball);
+        SchlaegerRechts.trifft(Ball);
       }
 
-      var direction
+      handleGamestartEvent = function(e) {                                    
+        if (e.keyCode) { key = e.keyCode; }
+        else if (typeof (e.which) != 'undefined') { key = e.which; }
 
-      switch (key) {       
-        case (115):                                   
-          direction = 'down'
-          break
-        case (119):                                   
-          direction = 'up'
-          break  
-      }  
+        handlePaddleEvent()
+      }
 
-      sendMovementToOtherPlayer(direction)
+      handlePaddleEvent = function(){
 
-      MovePlayerPaddle(player, direction)
-    }
+        if (player == 1){
+          switch (key) {       
+            case (32):    
+              direction = 'start'                                    
+              NeueRunde()
+              break
+          }
+        }
 
-    MovePlayerPaddle = function(playerNumber, direction){
-      
-      var schlaeger = playerNumber == 1 ? SchlaegerLinks:SchlaegerRechts
+        var direction
 
-      switch (direction) {       
-        case 'down':                                   
-          schlaeger.move(10)                                  
-          break
-        case 'up':                                   
-          schlaeger.move(-10)                        
-          break  
-      }  
-    }
+        switch (key) {       
+          case (115):                                   
+            direction = 'down'
+            break
+          case (119):                                   
+            direction = 'up'
+            break  
+        }  
 
-handleDocumentKeyboardEvents = function(){
-  document.onkeypress = ErkennenDerTasten
-}
+        sendMovementToOtherPlayer(direction)
 
-AnzeigeNeu = function(position, size) {
-  block = new BlockNeu(position, size, "green")
-  block.p = position
-  block.s = size
-  block.score = 0
-  block.Strich = []
-  
-  for (i = 0; i < 3; i++) {
-    block.Strich[i] = new BlockNeu({ x: 1, y: (i * block.s.hoehe / 2) }, { hoehe: 3, breite: block.s.breite - 2 }, "white")
-    block.appendChild(block.Strich[i])
-  }
+        MovePlayerPaddle(player, direction)
+      }
 
-  for (i = 0; i < 2; i++) {
-    block.Strich[i + 3] = new BlockNeu({ 
-      x: 0, y: i * block.s.hoehe / 2 + 4 
-    }, { hoehe: block.s.hoehe / 2 - 5, breite: 3 }, "white")
-    block.appendChild(block.Strich[i + 3])
+      MovePlayerPaddle = function(playerNumber, direction){
+        
+        var schlaeger = playerNumber == 1 ? SchlaegerLinks:SchlaegerRechts
 
-    block.Strich[i + 5] = new BlockNeu({ 
-      x: block.s.breite - 3, y: i * block.s.hoehe / 2 + 4 
-      }, { hoehe: block.s.hoehe / 2 - 5, breite: 3 
-      }, "white")
-    block.appendChild(block.Strich[i + 5])
-  }
+        switch (direction) {       
+          case 'down':                                   
+            schlaeger.move(10)                                  
+            break
+          case 'up':                                   
+            schlaeger.move(-10)                        
+            break  
+        }  
+      }
 
-var Segmente=new Array(
-      [0, 2, 3, 4, 5, 6],
-      [3, 4],
-      [0, 5, 1, 4, 2],
-      [0, 5, 1, 2, 6],
-      [1, 3, 5, 6],
-      [0, 1, 2, 3, 6],
-      [1, 2, 3, 4, 6],
-      [0, 5, 6],
-      [0, 1, 2, 3, 4, 5, 6],
-      [0, 1, 3, 5, 6])
+      handleDocumentKeyboardEvents = function(){
+        document.onkeypress = handleGamestartEvent
+      }
 
-    block.setValue = function(value) {
-        this.value = value;        
+      AnzeigeNeu = function(position, size) {
+        block = new BlockNeu(position, size, "green")
+        block.p = position
+        block.s = size
+        block.score = 0
+        block.Strich = []
+        
+        for (i = 0; i < 3; i++) {
+          block.Strich[i] = new BlockNeu({ x: 1, y: (i * block.s.hoehe / 2) }, { hoehe: 3, breite: block.s.breite - 2 }, "white")
+          block.appendChild(block.Strich[i])
+        }
+
+        for (i = 0; i < 2; i++) {
+          block.Strich[i + 3] = new BlockNeu({ 
+            x: 0, y: i * block.s.hoehe / 2 + 4 
+          },
+          { hoehe: block.s.hoehe / 2 - 5, breite: 3
+          }, "white")
+          block.appendChild(block.Strich[i + 3])
+
+          block.Strich[i + 5] = new BlockNeu({ 
+            x: block.s.breite - 3, y: i * block.s.hoehe / 2 + 4 
+            },
+            { hoehe: block.s.hoehe / 2 - 5, breite: 3 
+            }, "white")
+          block.appendChild(block.Strich[i + 5])
+        }
+
+        var Segmente=new Array(
+          [0, 2, 3, 4, 5, 6],
+          [3, 4],
+          [0, 5, 1, 4, 2],
+          [0, 5, 1, 2, 6],
+          [1, 3, 5, 6],
+          [0, 1, 2, 3, 6],
+          [1, 2, 3, 4, 6],
+          [0, 5, 6],
+          [0, 1, 2, 3, 4, 5, 6],
+          [0, 1, 3, 5, 6])
+
+      block.setValue = function(value) {
+        this.value = value        
         for (i = 0; i < 7; i++) {
-            this.Strich[i].style.backgroundColor = "green"
+          this.Strich[i].style.backgroundColor = "green"
         }
         for (i in Segmente[value]) {
-            this.Strich[Segmente[value][i]].style.backgroundColor = "white"
+          this.Strich[Segmente[value][i]].style.backgroundColor = "white"
         }
-    }
+      }
     return block;
-}
+    }
 
     NeueRunde = function() {
       starteSpiel()
@@ -416,9 +422,9 @@ var Segmente=new Array(
       }
     }
 
-  </script>
-</head>
- <body>
+   </script>
+  </head>
+  <body>
    <br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br>
    <TABLE BORDER=10 bgcolor=green>
      <TR align=center>

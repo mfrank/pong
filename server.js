@@ -28,8 +28,6 @@ io.sockets.on('connection', function (socket) {
      socket.emit('accepted', { player: 1 })
      console.log("player 1 connected")
    
-     playerA.on('ping')
-
      playerA.on('disconnect', function (){
        console.log("disconnect player 1")
        playerA = null
