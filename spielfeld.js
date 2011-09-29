@@ -52,7 +52,6 @@ NetzNeu = function(position, size, nodash) {
   return block
 }
 
-
 var linkeTafel = breite / 4
 var rechteTafel = 3 * breite / 4
 
@@ -86,13 +85,10 @@ erstelleAnzeige = function(x){
   return anzeige
 }
 
-
 schlaegerUndBall = function(){
   ballErstellen()
   schlaegerErstellen()
 }
-
-
 
 BlockNeu = function(position, size, c) {
   var block = document.createElement("div")
@@ -153,7 +149,6 @@ schlaegerErstellen = function(){
 linkerSchlaegerWirdErstellt = function(){
   
   SchlaegerLinks = erstelleSchlaeger(spielfeldRand)
-
 }
 
 rechterSchlaegerWirdErstellt = function(){
@@ -166,7 +161,6 @@ rechterSchlaegerWirdErstellt = function(){
 var schlaeger
 
 erstelleSchlaeger = function(x){
-
   var schlaeger = new SchlaegerNeu(
     {
       x: x, y: (hoehe / 2 - 30)
@@ -175,7 +169,6 @@ erstelleSchlaeger = function(x){
       hoehe: 75, breite: 15 
     }
   )
-
   Feld.appendChild(schlaeger)
 
   return schlaeger
@@ -185,16 +178,24 @@ SchlaegerNeu = function(position, size) {
   block = BlockNeu(position, size, "white")
   block.p = position
   block.s = size
- 
-
-  block.move = function(d) {
-   
+  block.move = function(d) { 
+    
+    if (this.p.y >= 15){
       this.p.y += d
       this.style.top = this.p.y + 'px'
-    
-   
-  }
+    }
+    else
+      this.p.y = 15
+      this.style.top = this.p.y + 'px'
 
+   if (this.p.y <= block.s.hoehe + 190){
+      this.p.y += d
+      this.style.top = this.p.y  + 'px'
+    }
+    else
+      this.p.y = block.s.hoehe + 190
+      this.style.top = this.p.y + 'px'
+  }
 
   block.trifft = function(B){
     if (((B.p.x + B.r) >= this.p.x) && (B.p.x <= (this.p.x + this.s.breite))) {
@@ -206,13 +207,11 @@ SchlaegerNeu = function(position, size) {
 return block
 }
 
-
-
 update = function() {                       
   var zustand = Ball.move()                  
   if (zustand != 0){
     Timer.clearTimer()
-
+   
     if (zustand == 1) {
       AnzeigeL.setValue(AnzeigeL.value + 1)
     } else {
@@ -232,7 +231,6 @@ pruefeObSpielerGewonnenHat = function(){
     startRound()
   }
 }
-
 
 AnzeigeNeu = function(position, size) {
   block = new BlockNeu(position, size, "green")

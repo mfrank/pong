@@ -3,7 +3,7 @@ handleDocumentKeyboardEvents = function(){
 }
 
 handleGamestartEvent = function(e) {                                    
-  if (e.keyCode) { key = e.keyCode; }
+  if (e.keyCode) { key = e.keyCode }
   else if (typeof (e.which) != 'undefined') { key = e.which; }
 
   handlePaddleEvent()
