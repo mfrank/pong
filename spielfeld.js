@@ -205,34 +205,33 @@ SchlaegerNeu = function(position, size) {
         winkel = 100*(B.p.y - this.p.y)/block.s.hoehe
   
         if(winkel>=0 && winkel<=1*100/7){
-          B.v.y = (B.v.y + (-3))%B.v.x
+          B.v.y = (B.v.y + (-3))
         }
         if(winkel>1*100/7 && winkel<=2*100/7){
-          B.v.y = (B.v.y + (-2))%B.v.x
+          B.v.y = (B.v.y + (-2))
         }
         if(winkel>2*100/7 && winkel<=3*100/7){
-          B.v.y = (B.v.y + (-1))%B.v.x
+          B.v.y = (B.v.y + (-1))
         }
         if(winkel>3*100/7 && winkel<=4*100/7){
-          B.v.y = (B.v.y)%B.v.x
+          B.v.y = (B.v.y)
         }
         if(winkel>4*100/7 && winkel<=5*100/7){
-          B.v.y = (B.v.y + (1))%B.v.x
+          B.v.y = (B.v.y + (1))
         }
         if(winkel>5*100/7 && winkel<=6*100/7){
-          B.v.y = (B.v.y + (2))%B.v.x
+          B.v.y = (B.v.y + (2))
         }
         if(winkel>6*100/7 && winkel<=100){
-          B.v.y = (B.v.y + (3))%B.v.x
+          B.v.y = (B.v.y + (3))
         }
   
-        B.v.x *= -1  
+        B.v.x = -B.v.x  
        
       }
     }
   }
-     for (i = 0; i < 5; i++)
-        alert(i)
+
 return block
 }
 
