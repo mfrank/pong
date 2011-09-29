@@ -7,10 +7,10 @@ var io = require('socket.io').listen(app)
 app.get('/', function (req, res) {
    console.log(req)
    
-  res.sendfile(__dirname + '/pong.html');
+  res.sendfile(__dirname + '/pong.html')
 })
 
-app.use(express.static(__dirname));
+app.use(express.static(__dirname))
 app.use(express.logger())
 
 
@@ -35,14 +35,14 @@ io.sockets.on('connection', function (socket) {
      })
 
      playerA.on('move', function (data) {
-      console.log("Player 1 wants to go " + data.direction);
+      console.log("Player 1 wants to go " + data.direction)
       if (playerB != null){
         playerB.emit('move', data)
       }
     })
 
     playerA.on('start', function(){
-        console.log("Player 1 started the game");
+        console.log("Player 1 started the game")
       if (playerB != null){
         playerB.emit('start')
       }
@@ -63,11 +63,11 @@ io.sockets.on('connection', function (socket) {
      })
 
     
-      playerB.on('move', function (data) {
+    playerB.on('move', function (data) {
       console.log("Player 2 wants to go " + data.direction)
       if (playerA != null){
         playerA.emit('move', data)
-    }
-    });   
+      }
+    })
   }
-});
+})
