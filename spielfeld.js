@@ -174,6 +174,7 @@ erstelleSchlaeger = function(x){
   return schlaeger
 }
 
+
 SchlaegerNeu = function(position, size) {
   block = BlockNeu(position, size, "white")
   block.p = position
@@ -200,10 +201,38 @@ SchlaegerNeu = function(position, size) {
   block.trifft = function(B){
     if (((B.p.x + B.r) >= this.p.x) && (B.p.x <= (this.p.x + this.s.breite))) {
       if (B.p.y >= this.p.y && B.p.y <= (this.p.y + this.s.hoehe)) {
-        B.v.x = -B.v.x
+  
+        winkel = 100*(B.p.y - this.p.y)/block.s.hoehe
+  
+        if(winkel>=0 && winkel<=1*100/7){
+          B.v.y = (B.v.y + (-3))%B.v.x
+        }
+        if(winkel>1*100/7 && winkel<=2*100/7){
+          B.v.y = (B.v.y + (-2))%B.v.x
+        }
+        if(winkel>2*100/7 && winkel<=3*100/7){
+          B.v.y = (B.v.y + (-1))%B.v.x
+        }
+        if(winkel>3*100/7 && winkel<=4*100/7){
+          B.v.y = (B.v.y)%B.v.x
+        }
+        if(winkel>4*100/7 && winkel<=5*100/7){
+          B.v.y = (B.v.y + (1))%B.v.x
+        }
+        if(winkel>5*100/7 && winkel<=6*100/7){
+          B.v.y = (B.v.y + (2))%B.v.x
+        }
+        if(winkel>6*100/7 && winkel<=100){
+          B.v.y = (B.v.y + (3))%B.v.x
+        }
+  
+        B.v.x *= -1  
+       
       }
     }
   }
+     for (i = 0; i < 5; i++)
+        alert(i)
 return block
 }
 
