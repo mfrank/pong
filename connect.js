@@ -1,6 +1,18 @@
 var _player
 var _socket
 
+startGame = function(){
+  startRound() 
+  console.log('Das Spiel startet')
+  _socket.emit('start')
+  _isRunning = true
+}
+
+sendMovementToOtherPlayer = function(direction){
+  console.log(direction)
+  _socket.emit('move', { direction: direction, player:_player})
+}
+
 connectToServer = function(){
   
   console.log('connecting to server ...')

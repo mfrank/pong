@@ -2,14 +2,6 @@ var hoehe = 350
 var breite = 700                    
 var size = { hoehe: 75, breite: 15 }
 
-start = function(){
-  SpielfeldAufbauen()
-  handleDocumentKeyboardEvents()
-  connectToServer()
-}
-
-window.onload = start
-
 SpielfeldAufbauen = function() {
   rahmenDesSpielfeldes()
   schlaegerUndBall()
@@ -173,7 +165,7 @@ erstelleSchlaeger = function(x){
 
   return schlaeger
 }
-
+var ges = -2
 
 SchlaegerNeu = function(position, size) {
   block = BlockNeu(position, size, "white")
@@ -202,6 +194,8 @@ SchlaegerNeu = function(position, size) {
     if (((B.p.x + B.r) >= this.p.x) && (B.p.x <= (this.p.x + this.s.breite))) {
       if (B.p.y >= this.p.y && B.p.y <= (this.p.y + this.s.hoehe)) {
   
+    
+
         winkel = 100*(B.p.y - this.p.y)/block.s.hoehe
   
         if(winkel>=0 && winkel<=1*100/7){
@@ -222,17 +216,31 @@ SchlaegerNeu = function(position, size) {
         if(winkel>5*100/7 && winkel<=6*100/7){
           B.v.y = (B.v.y + (2))
         }
-        if(winkel>6*100/7 && winkel<=100){
+        if(winkel>6*100/7 && winkel<=7*100/7){
           B.v.y = (B.v.y + (3))
         }
   
-        B.v.x = -B.v.x  
-       
+         B.v.x = -B.v.x
+        
       }
     }
   }
 
 return block
+}
+
+MovePlayerPaddle = function(playerNumber, direction){
+        
+  var schlaeger = playerNumber == 1 ? SchlaegerLinks:SchlaegerRechts
+
+  switch (direction) {       
+    case 'down':                                   
+      schlaeger.move(10)                                  
+      break
+    case 'up':                                   
+      schlaeger.move(-10)                        
+      break  
+  }  
 }
 
 update = function() {                       

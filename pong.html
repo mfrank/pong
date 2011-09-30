@@ -7,6 +7,14 @@
       <script type="text/javascript" src="keyboardEvents.js"></script>
       <script type="text/javascript" src="connect.js"></script>
       
+      <script>
+        start = function(){
+          SpielfeldAufbauen()
+          registerForDocumentKeyboardEvents()
+          connectToServer()
+        }
+        window.onload = start
+      </script>
   </head>
   <body>
    <br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br>
