@@ -137,16 +137,22 @@ createArrayForSegments = function(){
     [0, 1, 2, 3, 4, 5, 6],
     [0, 1, 3, 5, 6])
 
-  block.setValue = function(value) {
-    this.value = value        
-    for (i = 0; i < 7; i++) {
-      this.Strich[i].style.backgroundColor = "green"
-    }
-    for (i in Segmente[value]) {
-      this.Strich[Segmente[value][i]].style.backgroundColor = "white"
-    }
+    setValueFromArray(Segmente)
+}
+
+setValueFromArray = function(Segmente){
+    block.setValue = function(value) {
+      this.value = value        
+      for (i = 0; i < 7; i++) {
+        this.Strich[i].style.backgroundColor = "green"
+      }
+      for (i in Segmente[value]) {
+        this.Strich[Segmente[value][i]].style.backgroundColor = "white"
+      }
   }
 }
+
+
 
 schlaegerUndBall = function(){
   ballErstellen()
@@ -197,14 +203,14 @@ schlaegerErstellen = function(){
 
 createLeftPaddle = function(){
   
-  SchlaegerLinks = createPaddle(spielfeldRand)
+  leftPaddle = createPaddle(spielfeldRand)
 }
 
 createRightPaddle = function(){
 
   var positionRechtsAmRand = breite - paddleWidth - spielfeldRand
 
-  SchlaegerRechts = createPaddle(positionRechtsAmRand)
+  rightPaddle = createPaddle(positionRechtsAmRand)
 }
 
 var schlaeger
@@ -298,7 +304,7 @@ sendDirectionToPaddle = function(direction){
 
 MovePlayerPaddle = function(playerNumber, direction){
         
-  var schlaeger = playerNumber == 1 ? SchlaegerLinks:SchlaegerRechts
+  var schlaeger = playerNumber == 1 ? leftPaddle:rightPaddle
 
   switch (direction) {       
     case 'down':                                   
@@ -310,7 +316,7 @@ MovePlayerPaddle = function(playerNumber, direction){
   }  
 }
 
-update = function() {                       
+updateScore = function() {                       
   var zustand = Ball.move()                  
   pruefeObSpielerGetroffenHat(zustand)
 }
@@ -326,7 +332,7 @@ pruefeObSpielerGetroffenHat = function(zustand){
       
     pruefeObSpielerGewonnenHat()         
   }
-    schlaegerTrifft() 
+  schlaegerTrifft() 
 }
 
 scorePlayerA = function(){
@@ -338,8 +344,8 @@ scorePlayerB = function(){
 }
 
 schlaegerTrifft = function(){
-  SchlaegerLinks.trifft(Ball)
-  SchlaegerRechts.trifft(Ball)
+  leftPaddle.trifft(Ball)
+  rightPaddle.trifft(Ball)
 }
 
 pruefeObSpielerGewonnenHat = function(){
@@ -355,22 +361,22 @@ startRound = function() {
 
   Ball.p = { x: 345, y: 175}
   Ball.v = { x: 3, y: 3}
-  Timer = new startTimer(20, update)
+  Timer = new startTimer(20, updateScore)
 }
 
 setzeSchlaegerZurueck = function(){
-  setzeSchlaegerRechtsZurueck()
-  setzeSchlaegerLinksZurueck()
+  setzerightPaddleZurueck()
+  setzeleftPaddleZurueck()
 }
 
-setzeSchlaegerRechtsZurueck = function(){
-  SchlaegerLinks.p = { x: spielfeldRand, y: (hoehe / 2 - 30) }
-  SchlaegerLinks.move(0)
+setzerightPaddleZurueck = function(){
+  leftPaddle.p = { x: spielfeldRand, y: (hoehe / 2 - 30) }
+  leftPaddle.move(0)
 }
 
-setzeSchlaegerLinksZurueck = function(){
-  SchlaegerRechts.p = { x: breite - paddleWidth - spielfeldRand, y: (hoehe / 2 - 30) }
-  SchlaegerRechts.move(0)
+setzeleftPaddleZurueck = function(){
+  rightPaddle.p = { x: breite - paddleWidth - spielfeldRand, y: (hoehe / 2 - 30) }
+  rightPaddle.move(0)
 }
 
 startTimer = function(tick, code) {

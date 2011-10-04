@@ -1,3 +1,5 @@
+var _isRunning = false
+
 registerForDocumentKeyboardEvents = function(){
    document.onkeypress = handleKeyboardEvent
 }
@@ -11,8 +13,6 @@ extractKeyFromEvent = function(e){
   return e.keyCode || e.which
 }
 
-var _isRunning = false
-
 handleKeyPress = function(key){
   handleKeyForGameStart(key)
   handleKeyForPaddleMovements(key)    
@@ -25,7 +25,6 @@ handleKeyForGameStart = function(key){
       case (32):     
         direction = 'start'
         startGame()
-     //   setzeSchlaegerZurueck()
         _isRunning = true
         break
     }
