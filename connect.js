@@ -8,26 +8,24 @@ startGame = function(){
   _socket.emit('start')
 }
 
-
-
 connectToServer = function(){
-  
   console.log('connecting to server ...')
   _socket = createSocketConnectingToServer()          
   startListeningToEventsFromServer(_socket)
 }
+
 createSocketConnectingToServer = function(){
   return io.connect('http://192.168.1.157:8080')
 }
+
 startListeningToEventsFromServer = function(s){
   handleServerAcceptedEvent(s)
   handleOtherPlayerMoveEvent(s)
   handleOtherPlayerTriggeredStartEvent(s)
 }
+
 handleServerAcceptedEvent = function(s){
- 
-  s.on('accepted', function (data) {
-    
+  s.on('accepted', function (data) { 
     setCurrentUserToBePlayerNumber(data.player)
   })
 }
@@ -42,14 +40,14 @@ setText = function(tagId, text){
   var element = document.getElementById(tagId)
   element.innerHTML = text
 }
-handleOtherPlayerMoveEvent = function(s){
-  
+
+handleOtherPlayerMoveEvent = function(s){ 
   s.on('move', function (data){
-  
     var otherPlayerNumber = _player == 1 ? 2 : 1
     MovePlayerPaddle( otherPlayerNumber, data.direction)
   })
 }
+
 handleOtherPlayerTriggeredStartEvent = function(s){
   s.on('start', function (){
     setzeSchlaegerZurueck()

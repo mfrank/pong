@@ -14,12 +14,8 @@ extractKeyFromEvent = function(e){
 var _isRunning = false
 
 handleKeyPress = function(key){
-
   handleKeyForGameStart(key)
-  handleKeyForPaddleMovements(key)
-  
-  
-     
+  handleKeyForPaddleMovements(key)    
 }
 
 handleKeyForGameStart = function(key){
@@ -39,17 +35,14 @@ handleKeyForGameStart = function(key){
 handleKeyForPaddleMovements = function(key){
   
   var direction = getDirectionFromKeyPress(key)
-
   sendDirectionToPaddle(direction)
 }
 
-getDirectionFromKeyPress = function(key){
-  
+getDirectionFromKeyPress = function(key){  
   switch (key) {       
     case (115):                                   
       return 'down'      
     case (119):                                  
       return 'up'
   }  
-
 }

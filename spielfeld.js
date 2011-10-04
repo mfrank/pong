@@ -188,28 +188,28 @@ return block
 }
 
 var spielfeldRand = 10
-var schlaegerBreite = 15
+var paddleWidth = 15
 
 schlaegerErstellen = function(){      
-  linkerSchlaegerWirdErstellt()
-  rechterSchlaegerWirdErstellt()
+  createLeftPaddle()
+  createRightPaddle()
 }
 
-linkerSchlaegerWirdErstellt = function(){
+createLeftPaddle = function(){
   
-  SchlaegerLinks = erstelleSchlaeger(spielfeldRand)
+  SchlaegerLinks = createPaddle(spielfeldRand)
 }
 
-rechterSchlaegerWirdErstellt = function(){
+createRightPaddle = function(){
 
-  var positionRechtsAmRand = breite - schlaegerBreite - spielfeldRand
+  var positionRechtsAmRand = breite - paddleWidth - spielfeldRand
 
-  SchlaegerRechts = erstelleSchlaeger(positionRechtsAmRand)
+  SchlaegerRechts = createPaddle(positionRechtsAmRand)
 }
 
 var schlaeger
 
-erstelleSchlaeger = function(x){
+createPaddle = function(x){
   var schlaeger = new SchlaegerNeu(
     {
       x: x, y: (hoehe / 2 - 30)
@@ -312,16 +312,32 @@ MovePlayerPaddle = function(playerNumber, direction){
 
 update = function() {                       
   var zustand = Ball.move()                  
+  pruefeObSpielerGetroffenHat(zustand)
+}
+
+pruefeObSpielerGetroffenHat = function(zustand){
   if (zustand != 0){
     Timer.clearTimer()
-   
+  
     if (zustand == 1) 
-      AnzeigeL.setValue(AnzeigeL.value + 1)
+      scorePlayerA()    
     else 
-      AnzeigeR.setValue(AnzeigeR.value + 1)
-    
+      scorePlayerB()
+      
     pruefeObSpielerGewonnenHat()         
   }
+    schlaegerTrifft() 
+}
+
+scorePlayerA = function(){
+  AnzeigeL.setValue(AnzeigeL.value + 1)
+}
+
+scorePlayerB = function(){
+  AnzeigeR.setValue(AnzeigeR.value + 1)
+}
+
+schlaegerTrifft = function(){
   SchlaegerLinks.trifft(Ball)
   SchlaegerRechts.trifft(Ball)
 }
@@ -353,7 +369,7 @@ setzeSchlaegerRechtsZurueck = function(){
 }
 
 setzeSchlaegerLinksZurueck = function(){
-  SchlaegerRechts.p = { x: breite - schlaegerBreite - spielfeldRand, y: (hoehe / 2 - 30) }
+  SchlaegerRechts.p = { x: breite - paddleWidth - spielfeldRand, y: (hoehe / 2 - 30) }
   SchlaegerRechts.move(0)
 }
 
