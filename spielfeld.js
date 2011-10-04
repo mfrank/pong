@@ -105,19 +105,27 @@ createHorizontaleLines = function (){
 
 createVerticalLines = function(){
   for (i = 0; i < 2; i++) {
-    block.Strich[i + 3] = new BlockNeu({ 
-      x: 0, y: i * block.s.hoehe / 2 + 4 
-    }, { hoehe: block.s.hoehe / 2 - 5, breite: 3}
-    , "white")
-    
-    block.appendChild(block.Strich[i + 3])
-
-    block.Strich[i + 5] = new BlockNeu({ 
-      x: block.s.breite - 3, y: i * block.s.hoehe / 2 + 4 },
-      { hoehe: block.s.hoehe / 2 - 5, breite: 3 }
-      , "white")
-    block.appendChild(block.Strich[i + 5])
+    createRightLines()
+    createLeftLines()
   }
+}
+
+createLeftLines = function(){
+  block.Strich[i + 3] = new BlockNeu({ 
+    x: 0, y: i * block.s.hoehe / 2 + 4 
+  }, { hoehe: block.s.hoehe / 2 - 5, breite: 3}
+  , "white")
+
+  block.appendChild(block.Strich[i + 3])
+}
+
+createRightLines = function(){
+  block.Strich[i + 5] = new BlockNeu({ 
+    x: block.s.breite - 3, y: i * block.s.hoehe / 2 + 4 },
+    { hoehe: block.s.hoehe / 2 - 5, breite: 3 }
+    , "white")
+
+  block.appendChild(block.Strich[i + 5])
 }
 
 createArrayForSegments = function(){
@@ -145,17 +153,15 @@ setValueFromArray = function(Segmente){
       for (i in Segmente[value]) {
         this.Strich[Segmente[value][i]].style.backgroundColor = "white"
       }
-  }
+    }
 }
-
-
 
 paddleUndBall = function(){
-  ballErstellen()
-  paddleErstellen()
+  createBall()
+  createLeftAndRightPaddle()
 }
 
-ballErstellen = function(){
+createBall = function(){
   Ball = new BallNeu({                     
     x: 345, y: 170 },
   { x: -2, y: 2}
@@ -169,12 +175,19 @@ BallNeu = function(position, velocity, radius) {
   block.p = position
   block.v = velocity
   block.r = radius
+  
+  startMovingBall()
+
+  return block
+}
+
+startMovingBall = function(){
   block.move = function(){
     this.p.x += this.v.x                                
     this.p.y += this.v.y
     this.style.top = this.p.y + 'px'
     this.style.left = this.p.x + 'px'
-
+    
     this.play = 0
     if (this.p.x + this.r > parseInt(this.parentNode.style.width))
         this.play = 1
@@ -186,13 +199,12 @@ BallNeu = function(position, velocity, radius) {
         this.v.y = -this.v.y
     return this.play
   }
-return block
 }
 
 var spielfeldRand = 10
 var paddleWidth = 15
 
-paddleErstellen = function(){      
+createLeftAndRightPaddle = function(){      
   createLeftPaddle()
   createRightPaddle()
 }
