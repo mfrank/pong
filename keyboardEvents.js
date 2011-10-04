@@ -17,7 +17,7 @@ handleKeyPress = function(key){
 
   handleKeyForGameStart(key)
 
- // if (_isRunning)
+  if (_isRunning = true)
     handleKeyForPaddleMovements(key)
   
 }
@@ -29,6 +29,7 @@ handleKeyForGameStart = function(key){
       case (32):  
         direction = 'start'
         startGame()
+        _isRunning = true
         break
     }
   }

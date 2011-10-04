@@ -237,37 +237,37 @@ SchlaegerNeu = function(position, size) {
       this.style.top = this.p.y + 'px'
   }
 
-  block.trifft = function(B){
-    if (((B.p.x + B.r) >= this.p.x) && (B.p.x <= (this.p.x + this.s.breite))) {
-      if (B.p.y >= this.p.y && B.p.y <= (this.p.y + this.s.hoehe)) {
+  block.trifft = function(ball){
+    if (((ball.p.x + ball.r) >= this.p.x) && (ball.p.x <= (this.p.x + this.s.breite))) {
+      if (ball.p.y >= this.p.y && ball.p.y <= (this.p.y + this.s.hoehe)) {
   
     
 
-        winkel = 100*(B.p.y - this.p.y)/block.s.hoehe
+        winkel = 100*(ball.p.y - this.p.y)/block.s.hoehe
   
         if(winkel>=0 && winkel<=1*100/7){
-          B.v.y = (B.v.y + (-3))
+          ball.v.y = (ball.v.y + (-3))
         }
         if(winkel>1*100/7 && winkel<=2*100/7){
-          B.v.y = (B.v.y + (-2))
+          ball.v.y = (ball.v.y + (-2))
         }
         if(winkel>2*100/7 && winkel<=3*100/7){
-          B.v.y = (B.v.y + (-1))
+          ball.v.y = (ball.v.y + (-1))
         }
         if(winkel>3*100/7 && winkel<=4*100/7){
-          B.v.y = (B.v.y)
+          ball.v.y = (ball.v.y)
         }
         if(winkel>4*100/7 && winkel<=5*100/7){
-          B.v.y = (B.v.y + (1))
+          ball.v.y = (ball.v.y + (1))
         }
         if(winkel>5*100/7 && winkel<=6*100/7){
-          B.v.y = (B.v.y + (2))
+          ball.v.y = (ball.v.y + (2))
         }
         if(winkel>6*100/7 && winkel<=7*100/7){
-          B.v.y = (B.v.y + (3))
+          ball.v.y = (ball.v.y + (3))
         }
   
-         B.v.x = -B.v.x
+         ball.v.x = -ball.v.x
         
       }
     }
@@ -330,11 +330,6 @@ startRound = function() {
   Ball.p = { x: 345, y: 175}
   Ball.v = { x: 3, y: 3}
   Timer = new startTimer(20, update)
-}
-
-setzeSchlaegerZurueck = function(){
-  SchlaegerLinks.p = {x: x, y: (hoehe / 2 - 30)}
-  SchlaegerRechts.p = {x: x, y: (hoehe / 2 - 30)}
 }
 
 startTimer = function(tick, code) {

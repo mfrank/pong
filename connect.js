@@ -5,7 +5,6 @@ startGame = function(){
   startRound() 
   console.log('Das Spiel startet')
   _socket.emit('start')
-
 }
 
 sendMovementToOtherPlayer = function(direction){
@@ -56,6 +55,7 @@ handleOtherPlayerMoveEvent = function(s){
 }
 handleOtherPlayerTriggeredStartEvent = function(s){
   s.on('start', function (){
-      startRound()           
+      startRound() 
+      SchlaegerLinks.p.y = SchlaegerRechts.p.y          
   })
 }
