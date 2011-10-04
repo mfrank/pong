@@ -15,44 +15,40 @@ var _isRunning = false
 
 handleKeyPress = function(key){
 
-  handleKeyForStartingGame(key)
-  if (_isRunning){
-    getDirectionForPaddleMove(key)
-  }
+  handleKeyForGameStart(key)
+
+ // if (_isRunning)
+    handleKeyForPaddleMovements(key)
+  
 }
 
-handleKeyForStartingGame = function(key){
-  var handled = false
+handleKeyForGameStart = function(key){
 
   if (_player == 1 && ! _isRunning ){
     switch (key) {       
       case (32):  
         direction = 'start'
         startGame()
-        handled = true
         break
     }
   }
 }
 
-getDirectionForPaddleMove = function(key){
-  var direction
-
-  switch (key) {       
-    case (115):                                   
-      direction = 'down'
-      break
-    case (119):                                   
-      direction = 'up'
-      break  
-  }  
+handleKeyForPaddleMovements = function(key){
+  
+  var direction = getDirectionFromKeyPress(key)
 
   sendDirectionToPaddle(direction)
 }
 
-sendDirectionToPaddle = function(direction){
-  if ( direction ){
-    sendMovementToOtherPlayer(direction)
-    MovePlayerPaddle(_player, direction)
-  }
+getDirectionFromKeyPress = function(key){
+  
+  switch (key) {       
+    case (115):                                   
+      return 'down'      
+    case (119):                                  
+      return 'up'
+  }  
+
 }
+

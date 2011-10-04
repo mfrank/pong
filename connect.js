@@ -5,7 +5,7 @@ startGame = function(){
   startRound() 
   console.log('Das Spiel startet')
   _socket.emit('start')
-  _isRunning = true
+
 }
 
 sendMovementToOtherPlayer = function(direction){
