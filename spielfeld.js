@@ -45,7 +45,6 @@ NetzNeu = function(position, size, nodash) {
   block = new BlockNeu(position, size, "green")
   block.p = position
   block.s = size
-  
   for (i = 0; i < nodash; i++) {
     Strich = new BlockNeu({ x: 0, y: i * 2 * block.s.hoehe / (2*nodash) }, { hoehe: size.hoehe / (2 * nodash), breite: size.breite }, "white")
     block.appendChild(Strich)
@@ -92,28 +91,40 @@ AnzeigeNeu = function(position, size) {
   block.s = size
   block.score = 0
   block.Strich = []
+  createHorizontaleLines(position, size)
+  createVerticalLines(position, size)
+  createArrayForSegments()
   
+  
+return block
+
+}
+createHorizontaleLines = function (position, size){
   for (i = 0; i < 3; i++) {
     block.Strich[i] = new BlockNeu({ x: 1, y: (i * block.s.hoehe / 2) }, { hoehe: 3, breite: block.s.breite - 2 }, "white")
     block.appendChild(block.Strich[i])
   }
+}
 
+createVerticalLines = function(position, size){
   for (i = 0; i < 2; i++) {
     block.Strich[i + 3] = new BlockNeu({ 
       x: 0, y: i * block.s.hoehe / 2 + 4 
-    },
-    { hoehe: block.s.hoehe / 2 - 5, breite: 3
-    }, "white")
+    }, { hoehe: block.s.hoehe / 2 - 5, breite: 3}
+    , "white")
+    
     block.appendChild(block.Strich[i + 3])
 
     block.Strich[i + 5] = new BlockNeu({ 
-      x: block.s.breite - 3, y: i * block.s.hoehe / 2 + 4 
-      },
-      { hoehe: block.s.hoehe / 2 - 5, breite: 3 
-      }, "white")
+      x: block.s.breite - 3, y: i * block.s.hoehe / 2 + 4 },
+      { hoehe: block.s.hoehe / 2 - 5, breite: 3 }
+    , "white")
     block.appendChild(block.Strich[i + 5])
   }
+}
 
+
+createArrayForSegments = function(){
   var Segmente=new Array(
     [0, 2, 3, 4, 5, 6],
     [3, 4],
@@ -135,7 +146,6 @@ AnzeigeNeu = function(position, size) {
       this.Strich[Segmente[value][i]].style.backgroundColor = "white"
     }
   }
-return block
 }
 
 schlaegerUndBall = function(){
