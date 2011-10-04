@@ -2,14 +2,6 @@ var hoehe = 350
 var breite = 700                    
 var size = { hoehe: 75, breite: 15 }
 
-start = function(){
-  SpielfeldAufbauen()
-  handleDocumentKeyboardEvents()
-  connectToServer()
-}
-
-window.onload = start
-
 SpielfeldAufbauen = function() {
   rahmenDesSpielfeldes()
   schlaegerUndBall()
@@ -31,11 +23,20 @@ FeldNeu = function(size) {
   return block
 }
 
+BlockNeu = function(position, size, c) {
+  var block = document.createElement("div")
+  block.style.position = "absolute"
+  block.style.width = size.breite + 'px'
+  block.style.height = size.hoehe + 'px'
+  block.style.top = position.y + 'px'
+  block.style.left = position.x + 'px'
+  block.style.backgroundColor = c
+  return block
+}
+
 netzErstellen = function(){
-  Netz = new NetzNeu({                                    
-    x: breite / 2, y: 0
-  }, {
-   hoehe: hoehe, breite: 2
+  Netz = new NetzNeu({ x: breite / 2, y: 0
+  }, { hoehe: hoehe, breite: 2
   }, 40)
   Feld.appendChild(Netz)
 }
@@ -44,7 +45,6 @@ NetzNeu = function(position, size, nodash) {
   block = new BlockNeu(position, size, "green")
   block.p = position
   block.s = size
-  
   for (i = 0; i < nodash; i++) {
     Strich = new BlockNeu({ x: 0, y: i * 2 * block.s.hoehe / (2*nodash) }, { hoehe: size.hoehe / (2 * nodash), breite: size.breite }, "white")
     block.appendChild(Strich)
@@ -85,30 +85,79 @@ erstelleAnzeige = function(x){
   return anzeige
 }
 
+AnzeigeNeu = function(position, size) {
+  block = new BlockNeu(position, size, "green")
+  block.p = position
+  block.s = size
+  block.score = 0
+  block.Strich = []
+  createHorizontaleLines(position, size)
+  createVerticalLines(position, size)
+  createArrayForSegments()
+  
+  
+return block
+
+}
+createHorizontaleLines = function (position, size){
+  for (i = 0; i < 3; i++) {
+    block.Strich[i] = new BlockNeu({ x: 1, y: (i * block.s.hoehe / 2) }, { hoehe: 3, breite: block.s.breite - 2 }, "white")
+    block.appendChild(block.Strich[i])
+  }
+}
+
+createVerticalLines = function(position, size){
+  for (i = 0; i < 2; i++) {
+    block.Strich[i + 3] = new BlockNeu({ 
+      x: 0, y: i * block.s.hoehe / 2 + 4 
+    }, { hoehe: block.s.hoehe / 2 - 5, breite: 3}
+    , "white")
+    
+    block.appendChild(block.Strich[i + 3])
+
+    block.Strich[i + 5] = new BlockNeu({ 
+      x: block.s.breite - 3, y: i * block.s.hoehe / 2 + 4 },
+      { hoehe: block.s.hoehe / 2 - 5, breite: 3 }
+    , "white")
+    block.appendChild(block.Strich[i + 5])
+  }
+}
+
+
+createArrayForSegments = function(){
+  var Segmente=new Array(
+    [0, 2, 3, 4, 5, 6],
+    [3, 4],
+    [0, 5, 1, 4, 2],
+    [0, 5, 1, 2, 6],
+    [1, 3, 5, 6],
+    [0, 1, 2, 3, 6],
+    [1, 2, 3, 4, 6],
+    [0, 5, 6],
+    [0, 1, 2, 3, 4, 5, 6],
+    [0, 1, 3, 5, 6])
+
+  block.setValue = function(value) {
+    this.value = value        
+    for (i = 0; i < 7; i++) {
+      this.Strich[i].style.backgroundColor = "green"
+    }
+    for (i in Segmente[value]) {
+      this.Strich[Segmente[value][i]].style.backgroundColor = "white"
+    }
+  }
+}
+
 schlaegerUndBall = function(){
   ballErstellen()
   schlaegerErstellen()
 }
 
-BlockNeu = function(position, size, c) {
-  var block = document.createElement("div")
-  block.style.position = "absolute"
-  block.style.width = size.breite + 'px'
-  block.style.height = size.hoehe + 'px'
-  block.style.top = position.y + 'px'
-  block.style.left = position.x + 'px'
-  block.style.backgroundColor = c
-  return block
-}
-
-
 ballErstellen = function(){
   Ball = new BallNeu({                     
-    x: 345, y: 170
-  }, {
-    x: -2,
-    y: 2
-  }, 10)
+    x: 345, y: 170 },
+  { x: -2, y: 2}
+  ,10)
 
   Feld.appendChild(Ball)
 }
@@ -139,28 +188,28 @@ return block
 }
 
 var spielfeldRand = 10
-var schlaegerBreite = 15
+var paddleWidth = 15
 
 schlaegerErstellen = function(){      
-  linkerSchlaegerWirdErstellt()
-  rechterSchlaegerWirdErstellt()
+  createLeftPaddle()
+  createRightPaddle()
 }
 
-linkerSchlaegerWirdErstellt = function(){
+createLeftPaddle = function(){
   
-  SchlaegerLinks = erstelleSchlaeger(spielfeldRand)
+  SchlaegerLinks = createPaddle(spielfeldRand)
 }
 
-rechterSchlaegerWirdErstellt = function(){
+createRightPaddle = function(){
 
-  var positionRechtsAmRand = breite - schlaegerBreite - spielfeldRand
+  var positionRechtsAmRand = breite - paddleWidth - spielfeldRand
 
-  SchlaegerRechts = erstelleSchlaeger(positionRechtsAmRand)
+  SchlaegerRechts = createPaddle(positionRechtsAmRand)
 }
 
 var schlaeger
 
-erstelleSchlaeger = function(x){
+createPaddle = function(x){
   var schlaeger = new SchlaegerNeu(
     {
       x: x, y: (hoehe / 2 - 30)
@@ -173,6 +222,7 @@ erstelleSchlaeger = function(x){
 
   return schlaeger
 }
+
 
 SchlaegerNeu = function(position, size) {
   block = BlockNeu(position, size, "white")
@@ -197,28 +247,97 @@ SchlaegerNeu = function(position, size) {
       this.style.top = this.p.y + 'px'
   }
 
-  block.trifft = function(B){
-    if (((B.p.x + B.r) >= this.p.x) && (B.p.x <= (this.p.x + this.s.breite))) {
-      if (B.p.y >= this.p.y && B.p.y <= (this.p.y + this.s.hoehe)) {
-        B.v.x = -B.v.x
+  block.trifft = function(ball){
+    if (((ball.p.x + ball.r) >= this.p.x) && (ball.p.x <= (this.p.x + this.s.breite))) {
+      if (ball.p.y >= this.p.y && ball.p.y <= (this.p.y + this.s.hoehe)) {
+  
+    
+
+        winkel = 100*(ball.p.y - this.p.y)/block.s.hoehe
+  
+        if(winkel>=0 && winkel<=1*100/7){
+          ball.v.y = (ball.v.y + (-3))
+        }
+        if(winkel>1*100/7 && winkel<=2*100/7){
+          ball.v.y = (ball.v.y + (-2))
+        }
+        if(winkel>2*100/7 && winkel<=3*100/7){
+          ball.v.y = (ball.v.y + (-1))
+        }
+        if(winkel>3*100/7 && winkel<=4*100/7){
+          ball.v.y = (ball.v.y)
+        }
+        if(winkel>4*100/7 && winkel<=5*100/7){
+          ball.v.y = (ball.v.y + (1))
+        }
+        if(winkel>5*100/7 && winkel<=6*100/7){
+          ball.v.y = (ball.v.y + (2))
+        }
+        if(winkel>6*100/7 && winkel<=7*100/7){
+          ball.v.y = (ball.v.y + (3))
+        }
+  
+         ball.v.x = -ball.v.x
+        
       }
     }
   }
+
 return block
+}
+
+
+sendDirectionToPaddle = function(direction){
+  if ( direction == undefined )
+    return
+
+  sendMovementToOtherPlayer(direction)
+  MovePlayerPaddle(_player, direction)
+  
+}
+
+MovePlayerPaddle = function(playerNumber, direction){
+        
+  var schlaeger = playerNumber == 1 ? SchlaegerLinks:SchlaegerRechts
+
+  switch (direction) {       
+    case 'down':                                   
+      schlaeger.move(10)                                  
+      break
+    case 'up':                                   
+      schlaeger.move(-10)                        
+      break  
+  }  
 }
 
 update = function() {                       
   var zustand = Ball.move()                  
+  pruefeObSpielerGetroffenHat(zustand)
+}
+
+pruefeObSpielerGetroffenHat = function(zustand){
   if (zustand != 0){
     Timer.clearTimer()
-   
-    if (zustand == 1) {
-      AnzeigeL.setValue(AnzeigeL.value + 1)
-    } else {
-      AnzeigeR.setValue(AnzeigeR.value + 1)
-    }
+  
+    if (zustand == 1) 
+      scorePlayerA()    
+    else 
+      scorePlayerB()
+      
     pruefeObSpielerGewonnenHat()         
   }
+    schlaegerTrifft() 
+}
+
+scorePlayerA = function(){
+  AnzeigeL.setValue(AnzeigeL.value + 1)
+}
+
+scorePlayerB = function(){
+  AnzeigeR.setValue(AnzeigeR.value + 1)
+}
+
+schlaegerTrifft = function(){
   SchlaegerLinks.trifft(Ball)
   SchlaegerRechts.trifft(Ball)
 }
@@ -232,63 +351,26 @@ pruefeObSpielerGewonnenHat = function(){
   }
 }
 
-AnzeigeNeu = function(position, size) {
-  block = new BlockNeu(position, size, "green")
-  block.p = position
-  block.s = size
-  block.score = 0
-  block.Strich = []
-  
-  for (i = 0; i < 3; i++) {
-    block.Strich[i] = new BlockNeu({ x: 1, y: (i * block.s.hoehe / 2) }, { hoehe: 3, breite: block.s.breite - 2 }, "white")
-    block.appendChild(block.Strich[i])
-  }
-
-  for (i = 0; i < 2; i++) {
-    block.Strich[i + 3] = new BlockNeu({ 
-      x: 0, y: i * block.s.hoehe / 2 + 4 
-    },
-    { hoehe: block.s.hoehe / 2 - 5, breite: 3
-    }, "white")
-    block.appendChild(block.Strich[i + 3])
-
-    block.Strich[i + 5] = new BlockNeu({ 
-      x: block.s.breite - 3, y: i * block.s.hoehe / 2 + 4 
-      },
-      { hoehe: block.s.hoehe / 2 - 5, breite: 3 
-      }, "white")
-    block.appendChild(block.Strich[i + 5])
-  }
-
-  var Segmente=new Array(
-    [0, 2, 3, 4, 5, 6],
-    [3, 4],
-    [0, 5, 1, 4, 2],
-    [0, 5, 1, 2, 6],
-    [1, 3, 5, 6],
-    [0, 1, 2, 3, 6],
-    [1, 2, 3, 4, 6],
-    [0, 5, 6],
-    [0, 1, 2, 3, 4, 5, 6],
-    [0, 1, 3, 5, 6])
-
-  block.setValue = function(value) {
-    this.value = value        
-    for (i = 0; i < 7; i++) {
-      this.Strich[i].style.backgroundColor = "green"
-    }
-    for (i in Segmente[value]) {
-      this.Strich[Segmente[value][i]].style.backgroundColor = "white"
-    }
-  }
-return block
-}
-
 startRound = function() {
 
-  Ball.p = { x: 345, y: 170}
+  Ball.p = { x: 345, y: 175}
   Ball.v = { x: 3, y: 3}
   Timer = new startTimer(20, update)
+}
+
+setzeSchlaegerZurueck = function(){
+  setzeSchlaegerRechtsZurueck()
+  setzeSchlaegerLinksZurueck()
+}
+
+setzeSchlaegerRechtsZurueck = function(){
+  SchlaegerLinks.p = { x: spielfeldRand, y: (hoehe / 2 - 30) }
+  SchlaegerLinks.move(0)
+}
+
+setzeSchlaegerLinksZurueck = function(){
+  SchlaegerRechts.p = { x: breite - paddleWidth - spielfeldRand, y: (hoehe / 2 - 30) }
+  SchlaegerRechts.move(0)
 }
 
 startTimer = function(tick, code) {
