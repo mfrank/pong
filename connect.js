@@ -2,15 +2,13 @@ var _player
 var _socket
 
 startGame = function(){
+  setzeSchlaegerZurueck()
   startRound() 
   console.log('Das Spiel startet')
   _socket.emit('start')
 }
 
-sendMovementToOtherPlayer = function(direction){
-  console.log(direction)
-  _socket.emit('move', { direction: direction, player:_player})
-}
+
 
 connectToServer = function(){
   
@@ -50,12 +48,16 @@ handleOtherPlayerMoveEvent = function(s){
   
     var otherPlayerNumber = _player == 1 ? 2 : 1
     MovePlayerPaddle( otherPlayerNumber, data.direction)
-    
   })
 }
 handleOtherPlayerTriggeredStartEvent = function(s){
   s.on('start', function (){
-      startRound() 
-      SchlaegerLinks.p.y = SchlaegerRechts.p.y          
+    setzeSchlaegerZurueck()
+    startRound() 
   })
+}
+
+sendMovementToOtherPlayer = function(direction){
+  console.log(direction)
+  _socket.emit('move', { direction: direction, player:_player})
 }

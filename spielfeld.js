@@ -332,6 +332,21 @@ startRound = function() {
   Timer = new startTimer(20, update)
 }
 
+setzeSchlaegerZurueck = function(){
+  setzeSchlaegerRechtsZurueck()
+  setzeSchlaegerLinksZurueck()
+}
+
+setzeSchlaegerRechtsZurueck = function(){
+  SchlaegerLinks.p = { x: spielfeldRand, y: (hoehe / 2 - 30) }
+  SchlaegerLinks.move(0)
+}
+
+setzeSchlaegerLinksZurueck = function(){
+  SchlaegerRechts.p = { x: breite - schlaegerBreite - spielfeldRand, y: (hoehe / 2 - 30) }
+  SchlaegerRechts.move(0)
+}
+
 startTimer = function(tick, code) {
   this.timer = window.setInterval(code, tick)
   this.clearTimer = function() {

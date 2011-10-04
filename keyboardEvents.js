@@ -16,19 +16,20 @@ var _isRunning = false
 handleKeyPress = function(key){
 
   handleKeyForGameStart(key)
-
-  if (_isRunning = true)
-    handleKeyForPaddleMovements(key)
+  handleKeyForPaddleMovements(key)
   
+  
+     
 }
 
 handleKeyForGameStart = function(key){
 
-  if (_player == 1 && ! _isRunning ){
+  if (_player == 1 && _isRunning == false ){
     switch (key) {       
-      case (32):  
+      case (32):     
         direction = 'start'
         startGame()
+     //   setzeSchlaegerZurueck()
         _isRunning = true
         break
     }
@@ -52,4 +53,3 @@ getDirectionFromKeyPress = function(key){
   }  
 
 }
-

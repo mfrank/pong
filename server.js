@@ -42,7 +42,7 @@ io.sockets.on('connection', function (socket) {
     })
 
     playerA.on('start', function(){
-        console.log("Player 1 started the game")
+      console.log("Player 1 started the game")
       if (playerB != null){
         playerB.emit('start')
       }
