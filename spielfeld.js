@@ -4,21 +4,21 @@ var size = { hoehe: 75, breite: 15 }
 
 SpielfeldAufbauen = function() {
   rahmenDesSpielfeldes()
-  schlaegerUndBall()
-  }
-
-rahmenDesSpielfeldes = function(){
-  feldErstellen()
-  netzErstellen()
-  trefferanzeigeErstellen()
+  paddleUndBall()
 }
 
-feldErstellen = function(){
-  Feld = new FeldNeu({ hoehe: hoehe, breite: breite })
+rahmenDesSpielfeldes = function(){
+  createField()
+  createNet()
+  punktanzeigeErstellen()
+}
+
+createField = function(){
+  Feld = new newField({ hoehe: hoehe, breite: breite })
   document.body.appendChild(Feld)
 }
 
-FeldNeu = function(size) {
+newField = function(size) {
   var block = new BlockNeu({ x: 15, y: 35 }, size, "green")
   return block
 }
@@ -34,7 +34,7 @@ BlockNeu = function(position, size, c) {
   return block
 }
 
-netzErstellen = function(){
+createNet = function(){
   Netz = new NetzNeu({ x: breite / 2, y: 0
   }, { hoehe: hoehe, breite: 2
   }, 40)
@@ -52,27 +52,25 @@ NetzNeu = function(position, size, nodash) {
   return block
 }
 
-var linkeTafel = breite / 4
-var rechteTafel = 3 * breite / 4
-
-trefferanzeigeErstellen = function(){
- 
+punktanzeigeErstellen = function(){
   linkeAnzeigeWirdErstellt()
   rechteAnzeigeWirdErstellt()
 }
   
+var linkeTafel = breite / 4
+
 linkeAnzeigeWirdErstellt = function(){  
-  
-  AnzeigeL = erstelleAnzeige(linkeTafel)
+  AnzeigeL = createScoreBoard(linkeTafel)
 }
+
+var rechteTafel = 3 * breite / 4
 
 rechteAnzeigeWirdErstellt = function(){
-  
-  AnzeigeR = erstelleAnzeige(rechteTafel)
+  AnzeigeR = createScoreBoard(rechteTafel)
 }
 
-erstelleAnzeige = function(x){
-  var anzeige = new AnzeigeNeu(
+createScoreBoard = function(x){
+  var anzeige = new newScoreBoard(
     {
       x: x, y: 5
     },
@@ -85,28 +83,27 @@ erstelleAnzeige = function(x){
   return anzeige
 }
 
-AnzeigeNeu = function(position, size) {
+newScoreBoard = function(position, size) {
   block = new BlockNeu(position, size, "green")
   block.p = position
   block.s = size
   block.score = 0
   block.Strich = []
-  createHorizontaleLines(position, size)
-  createVerticalLines(position, size)
+  createHorizontaleLines()
+  createVerticalLines()
   createArrayForSegments()
-  
   
 return block
 
 }
-createHorizontaleLines = function (position, size){
+createHorizontaleLines = function (){
   for (i = 0; i < 3; i++) {
     block.Strich[i] = new BlockNeu({ x: 1, y: (i * block.s.hoehe / 2) }, { hoehe: 3, breite: block.s.breite - 2 }, "white")
     block.appendChild(block.Strich[i])
   }
 }
 
-createVerticalLines = function(position, size){
+createVerticalLines = function(){
   for (i = 0; i < 2; i++) {
     block.Strich[i + 3] = new BlockNeu({ 
       x: 0, y: i * block.s.hoehe / 2 + 4 
@@ -118,11 +115,10 @@ createVerticalLines = function(position, size){
     block.Strich[i + 5] = new BlockNeu({ 
       x: block.s.breite - 3, y: i * block.s.hoehe / 2 + 4 },
       { hoehe: block.s.hoehe / 2 - 5, breite: 3 }
-    , "white")
+      , "white")
     block.appendChild(block.Strich[i + 5])
   }
 }
-
 
 createArrayForSegments = function(){
   var Segmente=new Array(
@@ -154,9 +150,9 @@ setValueFromArray = function(Segmente){
 
 
 
-schlaegerUndBall = function(){
+paddleUndBall = function(){
   ballErstellen()
-  schlaegerErstellen()
+  paddleErstellen()
 }
 
 ballErstellen = function(){
@@ -196,7 +192,7 @@ return block
 var spielfeldRand = 10
 var paddleWidth = 15
 
-schlaegerErstellen = function(){      
+paddleErstellen = function(){      
   createLeftPaddle()
   createRightPaddle()
 }
@@ -213,10 +209,10 @@ createRightPaddle = function(){
   rightPaddle = createPaddle(positionRechtsAmRand)
 }
 
-var schlaeger
+var paddle
 
 createPaddle = function(x){
-  var schlaeger = new SchlaegerNeu(
+  var paddle = new paddleNeu(
     {
       x: x, y: (hoehe / 2 - 30)
     },
@@ -224,13 +220,13 @@ createPaddle = function(x){
       hoehe: 75, breite: 15 
     }
   )
-  Feld.appendChild(schlaeger)
+  Feld.appendChild(paddle)
 
-  return schlaeger
+  return paddle
 }
 
 
-SchlaegerNeu = function(position, size) {
+paddleNeu = function(position, size) {
   block = BlockNeu(position, size, "white")
   block.p = position
   block.s = size
@@ -254,7 +250,7 @@ SchlaegerNeu = function(position, size) {
   }
 
   block.trifft = function(ball){
-    if (((ball.p.x + ball.r) >= this.p.x) && (ball.p.x <= (this.p.x + this.s.breite))) {
+    if ((ball.p.x + ball.r) >= this.p.x && ball.p.x <= (this.p.x + this.s.breite)) {
       if (ball.p.y >= this.p.y && ball.p.y <= (this.p.y + this.s.hoehe)) {
   
     
@@ -299,51 +295,56 @@ sendDirectionToPaddle = function(direction){
 
   sendMovementToOtherPlayer(direction)
   MovePlayerPaddle(_player, direction)
-  
 }
 
 MovePlayerPaddle = function(playerNumber, direction){
         
-  var schlaeger = playerNumber == 1 ? leftPaddle:rightPaddle
+  var paddle = playerNumber == 1 ? leftPaddle:rightPaddle
 
   switch (direction) {       
     case 'down':                                   
-      schlaeger.move(10)                                  
+      paddle.move(10)                                  
       break
     case 'up':                                   
-      schlaeger.move(-10)                        
+      paddle.move(-10)                        
       break  
   }  
 }
 
-updateScore = function() {                       
-  var zustand = Ball.move()                  
-  pruefeObSpielerGetroffenHat(zustand)
+startRound = function() {
+
+  Ball.p = { x: 345, y: 170}
+  Ball.v = { x: 3, y: 3}
+  Timer = new startTimer(20, updateScore)
 }
 
-pruefeObSpielerGetroffenHat = function(zustand){
-  if (zustand != 0){
+updateScore = function() {                       
+  var punkt = Ball.move()                  
+  pruefeObSpielerGetroffenHat(punkt)
+}
+
+pruefeObSpielerGetroffenHat = function(punkt){
+  if (punkt != 0){
     Timer.clearTimer()
-  
-    if (zustand == 1) 
-      scorePlayerA()    
-    else 
-      scorePlayerB()
+    scorePlayerA(punkt)    
+    scorePlayerB(punkt)
       
     pruefeObSpielerGewonnenHat()         
   }
-  schlaegerTrifft() 
+  paddleTrifftBall() 
 }
 
-scorePlayerA = function(){
-  AnzeigeL.setValue(AnzeigeL.value + 1)
+scorePlayerA = function(punkt){
+  if (punkt == 1)
+    AnzeigeL.setValue(AnzeigeL.value + 1)
 }
 
-scorePlayerB = function(){
-  AnzeigeR.setValue(AnzeigeR.value + 1)
+scorePlayerB = function(punkt){
+  if (punkt == 2)
+    AnzeigeR.setValue(AnzeigeR.value + 1)
 }
 
-schlaegerTrifft = function(){
+paddleTrifftBall = function(){
   leftPaddle.trifft(Ball)
   rightPaddle.trifft(Ball)
 }
@@ -357,24 +358,17 @@ pruefeObSpielerGewonnenHat = function(){
   }
 }
 
-startRound = function() {
-
-  Ball.p = { x: 345, y: 175}
-  Ball.v = { x: 3, y: 3}
-  Timer = new startTimer(20, updateScore)
-}
-
 setzeSchlaegerZurueck = function(){
-  setzerightPaddleZurueck()
-  setzeleftPaddleZurueck()
+  setzeRechterSchlaegerZurueck()
+  setzeLinkerSchlaegerZurueck()
 }
 
-setzerightPaddleZurueck = function(){
+setzeRechterSchlaegerZurueck = function(){
   leftPaddle.p = { x: spielfeldRand, y: (hoehe / 2 - 30) }
   leftPaddle.move(0)
 }
 
-setzeleftPaddleZurueck = function(){
+setzeLinkerSchlaegerZurueck = function(){
   rightPaddle.p = { x: breite - paddleWidth - spielfeldRand, y: (hoehe / 2 - 30) }
   rightPaddle.move(0)
 }
