@@ -1,13 +1,6 @@
 var _player
 var _socket
 
-startGame = function(){
-  setPaddlePositionWhenGameStarts()
-  startRound() 
-  console.log('Das Spiel startet')
-  _socket.emit('start')
-}
-
 connectToServer = function(){
   console.log('connecting to server ...')
   _socket = createSocketConnectingToServer()          
@@ -30,7 +23,6 @@ handleServerAcceptedEvent = function(s){
   })
 }
 
-
 handleOtherPlayerMoveEvent = function(s){ 
   s.on('move', function (data){
     var otherPlayerNumber = _player == 1 ? 2 : 1
@@ -43,6 +35,13 @@ handleOtherPlayerTriggeredStartEvent = function(s){
     setPaddlePositionWhenGameStarts()
     startRound() 
   })
+}
+
+startGame = function(){
+  setPaddlePositionWhenGameStarts()
+  startRound() 
+  console.log('Das Spiel startet')
+  _socket.emit('start')
 }
 
 sendMovementToOtherPlayer = function(direction){
