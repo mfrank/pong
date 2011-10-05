@@ -2,7 +2,7 @@ var _player
 var _socket
 
 startGame = function(){
-  setzeSchlaegerZurueck()
+  setPaddlePositionWhenGameStarts()
   startRound() 
   console.log('Das Spiel startet')
   _socket.emit('start')
@@ -30,16 +30,6 @@ handleServerAcceptedEvent = function(s){
   })
 }
 
-setCurrentUserToBePlayerNumber = function(playerNumber) {
-  _player = playerNumber
-  console.log('Du bist Spieler '+ _player)
-  
-  setText('playerInfo', 'Du bist Spieler ' +playerNumber)
-}
-setText = function(tagId, text){
-  var element = document.getElementById(tagId)
-  element.innerHTML = text
-}
 
 handleOtherPlayerMoveEvent = function(s){ 
   s.on('move', function (data){
@@ -50,7 +40,7 @@ handleOtherPlayerMoveEvent = function(s){
 
 handleOtherPlayerTriggeredStartEvent = function(s){
   s.on('start', function (){
-    setzeSchlaegerZurueck()
+    setPaddlePositionWhenGameStarts()
     startRound() 
   })
 }
