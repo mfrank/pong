@@ -2,28 +2,28 @@ var height = 350
 var width = 700                    
 var size = { height: 75, width: 15 }
 
-SpielfeldAufbauen = function() {
-  rahmenDesSpielfeldes()
-  paddleUndBall()
+buildGame = function() {
+  createGameArea()
+  createBallAndPaddles()
 }
 
-rahmenDesSpielfeldes = function(){
-  createField()
+createGameArea = function(){
+  createCourt()
   createNet()
-  ballIsMovinganzeigeErstellen()
+  createDisplay()
 }
 
-createField = function(){
-  Feld = new newField({ height: height, width: width })
-  document.body.appendChild(Feld)
+createCourt = function(){
+  court = new newCourt({ height: height, width: width })
+  document.body.appendChild(court)
 }
 
-newField = function(size) {
-  var block = new BlockNeu({ x: 15, y: 35 }, size, "green")
+newCourt = function(size) {
+  var block = new newBlock({ x: 15, y: 35 }, size, "green")
   return block
 }
 
-BlockNeu = function(position, size, c) {
+newBlock = function(position, size, c) {
   var block = document.createElement("div")
   block.style.position = "absolute"
   block.style.width = size.width + 'px'
@@ -35,38 +35,38 @@ BlockNeu = function(position, size, c) {
 }
 
 createNet = function(){
-  Netz = new NetzNeu({ x: width / 2, y: 0
+  net = new newNet({ x: width / 2, y: 0
   }, { height: height, width: 2
   }, 40)
-  Feld.appendChild(Netz)
+  court.appendChild(net)
 }
 
-NetzNeu = function(position, size, nodash) {                 
-  block = new BlockNeu(position, size, "green")
+newNet = function(position, size, nodash) {                 
+  block = new newBlock(position, size, "green")
   block.p = position
   block.s = size
   for (i = 0; i < nodash; i++) {
-    Strich = new BlockNeu({ x: 0, y: i * 2 * block.s.height / (2*nodash) }, { height: size.height / (2 * nodash), width: size.width }, "white")
+    Strich = new newBlock({ x: 0, y: i * 2 * block.s.height / (2*nodash) }, { height: size.height / (2 * nodash), width: size.width }, "white")
     block.appendChild(Strich)
   }
   return block
 }
 
-ballIsMovinganzeigeErstellen = function(){
-  linkeAnzeigeWirdErstellt()
-  rechteAnzeigeWirdErstellt()
+createDisplay = function(){
+  createLeftDisplay()
+  createRightDisplay()
 }
   
-var linkeTafel = width / 4
+var leftBoard = width / 4
 
-linkeAnzeigeWirdErstellt = function(){  
-  AnzeigeL = createScoreBoard(linkeTafel)
+createLeftDisplay = function(){  
+  leftDisplay = createScoreBoard(leftBoard)
 }
 
-var rechteTafel = 3 * width / 4
+var rightBoard = 3 * width / 4
 
-rechteAnzeigeWirdErstellt = function(){
-  AnzeigeR = createScoreBoard(rechteTafel)
+createRightDisplay = function(){
+  rightDisplay = createScoreBoard(rightBoard)
 }
 
 createScoreBoard = function(x){
@@ -79,26 +79,27 @@ createScoreBoard = function(x){
     }
   )
   anzeige.setValue(0)
-  Feld.appendChild(anzeige)
+  court.appendChild(anzeige)
   return anzeige
 }
 
 newScoreBoard = function(position, size) {
-  block = new BlockNeu(position, size, "green")
+  block = new newBlock(position, size, "green")
   block.p = position
   block.s = size
   block.score = 0
   block.Strich = []
-  createHorizontaleLines()
+  createHorizontalLines()
   createVerticalLines()
-  createArrayForSegments()
+  createValuesForDisplay()
   
 return block
 
 }
-createHorizontaleLines = function (){
+
+createHorizontalLines = function (){
   for (i = 0; i < 3; i++) {
-    block.Strich[i] = new BlockNeu({ x: 1, y: (i * block.s.height / 2) }, { height: 3, width: block.s.width - 2 }, "white")
+    block.Strich[i] = new newBlock({ x: 1, y: (i * block.s.height / 2) }, { height: 3, width: block.s.width - 2 }, "white")
     block.appendChild(block.Strich[i])
   }
 }
@@ -111,7 +112,7 @@ createVerticalLines = function(){
 }
 
 createLeftLines = function(){
-  block.Strich[i + 3] = new BlockNeu({ 
+  block.Strich[i + 3] = new newBlock({ 
     x: 0, y: i * block.s.height / 2 + 4 
   }, { height: block.s.height / 2 - 5, width: 3}
   , "white")
@@ -120,7 +121,7 @@ createLeftLines = function(){
 }
 
 createRightLines = function(){
-  block.Strich[i + 5] = new BlockNeu({ 
+  block.Strich[i + 5] = new newBlock({ 
     x: block.s.width - 3, y: i * block.s.height / 2 + 4 },
     { height: block.s.height / 2 - 5, width: 3 }
     , "white")
@@ -128,8 +129,8 @@ createRightLines = function(){
   block.appendChild(block.Strich[i + 5])
 }
 
-createArrayForSegments = function(){
-  var Segmente=new Array(
+createValuesForDisplay = function(){
+  var segments=new Array(
     [0, 2, 3, 4, 5, 6],
     [3, 4],
     [0, 5, 1, 4, 2],
@@ -141,24 +142,24 @@ createArrayForSegments = function(){
     [0, 1, 2, 3, 4, 5, 6],
     [0, 1, 3, 5, 6])
 
-    setValueFromArray(Segmente)
+    setValueForDisplay(segments)
 }
 
-setValueFromArray = function(Segmente){
+setValueForDisplay = function(segments){
     block.setValue = function(value) {
       this.value = value        
       for (i = 0; i < 7; i++) {
         this.Strich[i].style.backgroundColor = "green"
       }
-      for (i in Segmente[value]) {
-        this.Strich[Segmente[value][i]].style.backgroundColor = "white"
+      for (i in segments[value]) {
+        this.Strich[segments[value][i]].style.backgroundColor = "white"
       }
     }
 }
 
-paddleUndBall = function(){
+createBallAndPaddles = function(){
   createBall()
-  createLeftAndRightPaddle()
+  createPaddlesAndSetPosition()
 }
 
 createBall = function(){
@@ -167,11 +168,11 @@ createBall = function(){
   { x: -2, y: 2}
   ,10)
 
-  Feld.appendChild(Ball)
+  court.appendChild(Ball)
 }
 
 BallNeu = function(position, velocity, radius) {
-  block = new BlockNeu(position, { height: radius, width: radius }, "white")
+  block = new newBlock(position, { height: radius, width: radius }, "white")
   block.p = position
   block.v = velocity
   block.r = radius
@@ -201,24 +202,24 @@ startMovingBall = function(){
   }
 }
 
-var spielfeldRand = 10
+var leftBoarder = 10
 var paddleWidth = 15
 
-createLeftAndRightPaddle = function(){      
+createPaddlesAndSetPosition = function(){      
   createLeftPaddle()
   createRightPaddle()
 }
 
 createLeftPaddle = function(){
   
-  leftPaddle = createPaddle(spielfeldRand)
+  leftPaddle = createPaddle(leftBoarder)
 }
 
 createRightPaddle = function(){
 
-  var positionRechtsAmRand = width - paddleWidth - spielfeldRand
+  var rightBoarder = width - paddleWidth - leftBoarder
 
-  rightPaddle = createPaddle(positionRechtsAmRand)
+  rightPaddle = createPaddle(rightBoarder)
 }
 
 var paddle
@@ -232,14 +233,14 @@ createPaddle = function(x){
       height: 75, width: 15 
     }
   )
-  Feld.appendChild(paddle)
+  court.appendChild(paddle)
 
   return paddle
 }
 
 
 newPaddle = function(position, size) {
-  block = BlockNeu(position, size, "white")
+  block = newBlock(position, size, "white")
   block.p = position
   block.s = size
   block.move = function(d) { 
@@ -331,31 +332,30 @@ startRound = function() {
 }
 
 updateScore = function() {                       
-  var ballIsMoving = Ball.move()                  
-  checkIfPlayerScored(ballIsMoving)
+  var ballIsStillInPlay = Ball.move()                  
+  checkIfPlayerScored(ballIsStillInPlay)
 }
 
-checkIfPlayerScored = function(ballIsMoving){
-  if (ballIsMoving){
+checkIfPlayerScored = function(ballIsStillInPlay){
+  if (ballIsStillInPlay){
     Timer.clearTimer()
 
-    scorePlayerA(ballIsMoving)    
-    scorePlayerB(ballIsMoving)
+    scorePlayerA(ballIsStillInPlay)    
+    scorePlayerB(ballIsStillInPlay)
       
-    checkIfPlayerWon
-  ()         
+    checkIfPlayerWon()         
   }
   checkIfBallHitPaddle() 
 }
 
-scorePlayerA = function(ballIsMoving){
-  if (ballIsMoving == 1)
-    AnzeigeL.setValue(AnzeigeL.value + 1)
+scorePlayerA = function(ballIsStillInPlay){
+  if (ballIsStillInPlay == 1)
+    leftDisplay.setValue(leftDisplay.value + 1)
 }
 
-scorePlayerB = function(ballIsMoving){
-  if (ballIsMoving == 2)
-    AnzeigeR.setValue(AnzeigeR.value + 1)
+scorePlayerB = function(ballIsStillInPlay){
+  if (ballIsStillInPlay == 2)
+    rightDisplay.setValue(rightDisplay.value + 1)
 }
 
 checkIfBallHitPaddle = function(){
@@ -364,7 +364,7 @@ checkIfBallHitPaddle = function(){
 }
 
 checkIfPlayerWon = function(){
-  if (AnzeigeL.value == 9 || AnzeigeR.value == 9) {
+  if (leftDisplay.value == 9 || rightDisplay.value == 9) {
     Timer.clearTimer()
   }
   else {
@@ -378,12 +378,12 @@ setPaddlePositionWhenGameStarts = function(){
 }
 
 setRightPaddlePositionWhenGameStarts = function(){
-  leftPaddle.p = { x: spielfeldRand, y: (height / 2 - 30) }
+  leftPaddle.p = { x: leftBoarder, y: (height / 2 - 30) }
   leftPaddle.move(0)
 }
 
 setLeftPaddlePositionWhenGameStarts = function(){
-  rightPaddle.p = { x: width - paddleWidth - spielfeldRand, y: (height / 2 - 30) }
+  rightPaddle.p = { x: width - paddleWidth - leftBoarder, y: (height / 2 - 30) }
   rightPaddle.move(0)
 }
 
