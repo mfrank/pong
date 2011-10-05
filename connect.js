@@ -34,7 +34,7 @@ handleServerAcceptedEvent = function(s){
 handleOtherPlayerMoveEvent = function(s){ 
   s.on('move', function (data){
     var otherPlayerNumber = _player == 1 ? 2 : 1
-    MovePlayerPaddle( otherPlayerNumber, data.direction)
+    movePlayerPaddle( otherPlayerNumber, data.direction)
   })
 }
 

@@ -19,29 +19,27 @@ handleKeyPress = function(key){
 }
 
 handleKeyForGameStart = function(key){
-
   if (_player == 1 && _isRunning == false ){
-    switch (key) {       
-      case (32):     
-        direction = 'start'
-        startGame()
-        _isRunning = true
-        break
-    }
+    handleKeyPressForGameStart(key)
+  }
+}
+
+handleKeyPressForGameStart = function(key){
+  if (key == 32) {       
+    direction = 'start'
+    startGame()
+    _isRunning = true
   }
 }
 
 handleKeyForPaddleMovements = function(key){
-  
   var direction = getDirectionFromKeyPress(key)
   sendDirectionToPaddle(direction)
 }
 
 getDirectionFromKeyPress = function(key){  
-  switch (key) {       
-    case (115):                                   
-      return 'down'      
-    case (119):                                  
-      return 'up'
-  }  
+  if (key == 115)
+    return 'down'       
+  if (key == 119)                          
+    return 'up' 
 }

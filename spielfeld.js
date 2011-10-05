@@ -102,8 +102,8 @@ createSegments = function(){
 }
 
 createHorizontalLines = function (){
-  for (i = 0; i < 3; i++) {
-    block.line[i] = new newBlock({ x: 1, y: (i * block.s.height / 2) }, { height: 3, width: block.s.width - 2 }, "white")
+  for (i = 0; i < 3; i++)
+    { block.line[i] = new newBlock({ x: 1, y: (i * block.s.height / 2) }, { height: 3, width: block.s.width - 2 }, "white")
     block.appendChild(block.line[i])
   }
 }
@@ -116,11 +116,7 @@ createVerticalLines = function(){
 }
 
 createLeftLines = function(){
-  block.line[i + 3] = new newBlock({ 
-    x: 0, y: i * block.s.height / 2 + 4 
-  }, { height: block.s.height / 2 - 5, width: 3}
-  , "white")
-
+  block.line[i + 3] = new newBlock({ x: 0, y: i * block.s.height / 2 + 4 }, { height: block.s.height / 2 - 5, width: 3}, "white")
   block.appendChild(block.line[i + 3])
 }
 
@@ -142,20 +138,17 @@ createValuesForDisplay = function(){
     [0, 1, 2, 3, 4, 5, 6],
     [0, 1, 3, 5, 6])
 
-    setValueForDisplay(segments)
+    setColorForSegments(segments)
 }
 
-setValueForDisplay = function(segments){
-    block.setValue = function(value) {
-      this.value = value        
-      
-      for (i = 0; i < 7; i++) {
-        this.line[i].style.backgroundColor = "green"
-      }
-      for (i in segments[value]) {
+setColorForSegments = function(segments){
+  block.setValue = function(value) {
+    this.value = value    
+    for (i = 0; i < 7; i++) 
+        this.line[i].style.backgroundColor = "green" 
+    for (i in segments[value]) 
         this.line[segments[value][i]].style.backgroundColor = "white"
-      }
-    }
+  }
 }
 
 createBallAndPaddles = function(){
@@ -206,25 +199,22 @@ ballMove = function(){
   }
 }
 
-
-
-var leftBoarder = 10
-var paddleWidth = 15
-
 createPaddlesAndSetPosition = function(){      
   createLeftPaddle()
   createRightPaddle()
 }
+
+var leftBoarder = 10
+var paddleWidth = 15
 
 createLeftPaddle = function(){
   
   leftPaddle = createPaddle(leftBoarder)
 }
 
+var rightBoarder = width - paddleWidth - leftBoarder
+
 createRightPaddle = function(){
-
-  var rightBoarder = width - paddleWidth - leftBoarder
-
   rightPaddle = createPaddle(rightBoarder)
 }
 
@@ -297,54 +287,68 @@ newPaddle = function(position, size) {
     }
   }
 
-return block
+  return block
 }
-
 
 sendDirectionToPaddle = function(direction){
   if ( direction == undefined )
     return
 
   sendMovementToOtherPlayer(direction)
-  MovePlayerPaddle(_player, direction)
+  movePlayerPaddle(_player, direction)
 }
 
-MovePlayerPaddle = function(playerNumber, direction){
-        
+movePlayerPaddle = function(playerNumber, direction){      
   var paddle = playerNumber == 1 ? leftPaddle:rightPaddle
-
-  switch (direction) {       
-    case 'down':                                   
-      paddle.move(10)                                  
-      break
-    case 'up':                                   
-      paddle.move(-10)                        
-      break  
-  }  
+  movePlayerPaddleDown(paddle, direction)
+  movePlayerPaddleUp(paddle, direction)
 }
 
-startRound = function() {
+movePlayerPaddleDown = function(paddle, direction){
+  if (direction == 'down')                                      
+    paddle.move(10)               
+}   
 
+movePlayerPaddleUp = function(paddle, direction){
+  if (direction == 'up')                                   
+    paddle.move(-10)                        
+} 
+
+startRound = function(playerNumber, direction) {
   ball.p = { x: 345, y: 170}
   ball.v = { x: 3, y: 3}
-  Timer = new startTimer(20, updateScore)
+  Timer = new startTimer(20, update)
 }
 
-updateScore = function() {                       
-  var ballIsStillInPlay = ball.move()                  
+startTimer = function(tick, code, codew) {
+  this.timer = window.setInterval(code, tick)
+  this.clearTimer = function() {
+    window.clearInterval(this.timer)
+  }
+}
+
+update = function() {                       
+  var ballIsStillInPlay = ball.move()        
+  checkIfBallHitPaddle()
   checkIfPlayerScored(ballIsStillInPlay)
+}
+
+checkIfBallHitPaddle = function(){
+  leftPaddle.hit(ball)
+  rightPaddle.hit(ball)
 }
 
 checkIfPlayerScored = function(ballIsStillInPlay){
   if (ballIsStillInPlay){
     Timer.clearTimer()
+    scorePlayer(ballIsStillInPlay)
+    checkIfPlayerWon() 
+  }  
+}
 
-    scorePlayerA(ballIsStillInPlay)    
-    scorePlayerB(ballIsStillInPlay)
-      
-    checkIfPlayerWon()         
-  }
-  checkIfballHitPaddle() 
+scorePlayer = function(ballIsStillInPlay){
+  scorePlayerA(ballIsStillInPlay)    
+  scorePlayerB(ballIsStillInPlay)   
 }
 
 scorePlayerA = function(ballIsStillInPlay){
@@ -355,11 +359,6 @@ scorePlayerA = function(ballIsStillInPlay){
 scorePlayerB = function(ballIsStillInPlay){
   if (ballIsStillInPlay == 2)
     rightDisplay.setValue(rightDisplay.value + 1)
-}
-
-checkIfballHitPaddle = function(){
-  leftPaddle.hit(ball)
-  rightPaddle.hit(ball)
 }
 
 checkIfPlayerWon = function(){
@@ -384,13 +383,6 @@ setRightPaddlePositionWhenGameStarts = function(){
 setLeftPaddlePositionWhenGameStarts = function(){
   rightPaddle.p = { x: width - paddleWidth - leftBoarder, y: (height / 2 - 30) }
   rightPaddle.move(0)
-}
-
-startTimer = function(tick, code) {
-  this.timer = window.setInterval(code, tick)
-  this.clearTimer = function() {
-    window.clearInterval(this.timer)
-  }
 }
 
 showCurrentPlayerText = function(tagId, text){
