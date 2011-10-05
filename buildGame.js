@@ -88,7 +88,6 @@ newScoreBoard = function(position, size) {
   createSevenSegmentDisplay()
   
   return block
-
 }
 
 createSevenSegmentDisplay = function(){
@@ -144,9 +143,9 @@ createValuesForDisplay = function(){
 setColorForSegments = function(segments){
   block.setValue = function(value) {
     this.value = value    
-    for (i = 0; i < 7; i++) 
-        this.line[i].style.backgroundColor = "green" 
-    for (i in segments[value]) 
+      for (i = 0; i < 7; i++) 
+        this.line[i].style.backgroundColor = "green"     
+      for (i in segments[value]) 
         this.line[segments[value][i]].style.backgroundColor = "white"
   }
 }
@@ -226,7 +225,6 @@ createPaddle = function(x){
   return paddle
 }
 
-
 newPaddle = function(position, size) {
   block = newBlock(position, size, "white")
   block.p = position
@@ -254,31 +252,29 @@ newPaddle = function(position, size) {
     if ((ball.p.x + ball.r) >= this.p.x && ball.p.x <= (this.p.x + this.s.width)) {
       if (ball.p.y >= this.p.y && ball.p.y <= (this.p.y + this.s.height)) {
   
-    
 
         paddleArea = 100*(ball.p.y - this.p.y)/block.s.height
   
-        if(paddleArea>=0 && paddleArea<=1*100/7){
+        if(paddleArea>=0 && paddleArea<=1*100/7)
           ball.v.y = (ball.v.y + (-3))
-        }
-        if(paddleArea>1*100/7 && paddleArea<=2*100/7){
+        
+        if(paddleArea>1*100/7 && paddleArea<=2*100/7)
           ball.v.y = (ball.v.y + (-2))
-        }
-        if(paddleArea>2*100/7 && paddleArea<=3*100/7){
+        
+        if(paddleArea>2*100/7 && paddleArea<=3*100/7)
           ball.v.y = (ball.v.y + (-1))
-        }
-        if(paddleArea>3*100/7 && paddleArea<=4*100/7){
+        
+        if(paddleArea>3*100/7 && paddleArea<=4*100/7)
           ball.v.y = (ball.v.y)
-        }
-        if(paddleArea>4*100/7 && paddleArea<=5*100/7){
+        
+        if(paddleArea>4*100/7 && paddleArea<=5*100/7)
           ball.v.y = (ball.v.y + (1))
-        }
-        if(paddleArea>5*100/7 && paddleArea<=6*100/7){
+        
+        if(paddleArea>5*100/7 && paddleArea<=6*100/7)
           ball.v.y = (ball.v.y + (2))
-        }
-        if(paddleArea>6*100/7 && paddleArea<=7*100/7){
+        
+        if(paddleArea>6*100/7 && paddleArea<=7*100/7)
           ball.v.y = (ball.v.y + (3))
-        }
   
          ball.v.x = -ball.v.x
         
@@ -291,7 +287,7 @@ newPaddle = function(position, size) {
 
 sendDirectionToPaddle = function(direction){
   if ( direction == undefined )
-    return
+  return
 
   sendMovementToOtherPlayer(direction)
   movePlayerPaddle(_player, direction)
@@ -361,12 +357,11 @@ scorePlayerB = function(ballIsStillInPlay){
 }
 
 checkIfPlayerWon = function(){
-  if (leftDisplay.value == 9 || rightDisplay.value == 9) {
+  if (leftDisplay.value == 9 || rightDisplay.value == 9) 
     Timer.clearTimer()
-  }
-  else {
+  
+  else 
     startRound()
-  }
 }
 
 setPaddlePositionWhenGameStarts = function(){
