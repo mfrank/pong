@@ -19,9 +19,8 @@ handleKeyPress = function(key){
 }
 
 handleKeyForGameStart = function(key){
-  if (_player == 1 && _isRunning == false ){
+  if (_player == 1 && _isRunning == false )
     handleKeyPressForGameStart(key)
-  }
 }
 
 handleKeyPressForGameStart = function(key){

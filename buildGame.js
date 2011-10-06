@@ -143,24 +143,20 @@ createValuesForDisplay = function(){
 setColorForSegments = function(segments){
   block.setValue = function(value) {
     this.value = value    
-      for (i = 0; i < 7; i++) 
-        this.line[i].style.backgroundColor = "green"     
-      for (i in segments[value]) 
-        this.line[segments[value][i]].style.backgroundColor = "white"
+    for (i = 0; i < 7; i++) 
+      this.line[i].style.backgroundColor = "green"     
+    for (i in segments[value]) 
+      this.line[segments[value][i]].style.backgroundColor = "white"
   }
 }
 
 createBallAndPaddles = function(){
-  createball()
+  createBall()
   createPaddlesAndSetPosition()
 }
 
-createball = function(){
-  ball = new newBall({                     
-    x: 345, y: 170 },
-  { x: -2, y: 2}
-  ,10)
-
+createBall = function(){
+  ball = new newBall({ x: 345, y: 170 }, { x: -2, y: 2}, 10)
   court.appendChild(ball)
 }
 
@@ -206,7 +202,7 @@ createPaddlesAndSetPosition = function(){
 var leftBoarder = 10
 var paddleWidth = 15
 
-createLeftPaddle = function(){ 
+createLeftPaddle = function(){
   leftPaddle = createPaddle(leftBoarder)
 }
 
@@ -219,9 +215,8 @@ createRightPaddle = function(){
 var paddle
 
 createPaddle = function(x){
-  var paddle = new newPaddle({ x: x, y: (height / 2 - 30)}, {height: 75, width: 15})
+  paddle = new newPaddle({ x: x, y: (height / 2 - 30)}, {height: 75, width: 15})
   court.appendChild(paddle)
-
   return paddle
 }
 
@@ -229,10 +224,10 @@ newPaddle = function(position, size) {
   block = newBlock(position, size, "white")
   block.p = position
   block.s = size
-  block.move = function(d) { 
+  block.move = function(go) { 
     
     if (this.p.y >= 15){
-      this.p.y += d
+      this.p.y += go
       this.style.top = this.p.y + 'px'
     }
     else
@@ -240,7 +235,7 @@ newPaddle = function(position, size) {
       this.style.top = this.p.y + 'px'
 
    if (this.p.y <= block.s.height + 190){
-      this.p.y += d
+      this.p.y += go
       this.style.top = this.p.y  + 'px'
     }
     else
@@ -256,32 +251,30 @@ newPaddle = function(position, size) {
         paddleArea = 100*(ball.p.y - this.p.y)/block.s.height
   
         if(paddleArea>=0 && paddleArea<=1*100/7)
-          ball.v.y = (ball.v.y + (-3))
+          ball.v.y = ball.v.y + (-3)
         
         if(paddleArea>1*100/7 && paddleArea<=2*100/7)
-          ball.v.y = (ball.v.y + (-2))
+          ball.v.y = ball.v.y + (-2)
         
         if(paddleArea>2*100/7 && paddleArea<=3*100/7)
-          ball.v.y = (ball.v.y + (-1))
+          ball.v.y = ball.v.y + (-1)
         
         if(paddleArea>3*100/7 && paddleArea<=4*100/7)
-          ball.v.y = (ball.v.y)
+          ball.v.y = ball.v.y
         
         if(paddleArea>4*100/7 && paddleArea<=5*100/7)
-          ball.v.y = (ball.v.y + (1))
+          ball.v.y = ball.v.y + 1
         
         if(paddleArea>5*100/7 && paddleArea<=6*100/7)
-          ball.v.y = (ball.v.y + (2))
+          ball.v.y = ball.v.y + 2
         
         if(paddleArea>6*100/7 && paddleArea<=7*100/7)
-          ball.v.y = (ball.v.y + (3))
-  
-         ball.v.x = -ball.v.x
-        
+          ball.v.y = ball.v.y + 3
+
+        ball.v.x = -ball.v.x
       }
     }
   }
-
   return block
 }
 
@@ -309,21 +302,23 @@ movePlayerPaddleUp = function(paddle, direction){
     paddle.move(-10)                        
 } 
 
-startRound = function(playerNumber, direction) {
+startRound = function(playerNumber, direction){
   ball.p = { x: 345, y: 170}
   ball.v = { x: 3, y: 3}
-  Timer = new startTimer(20, update)
+  timer = new startTimer(20, update)
 }
 
-startTimer = function(tick, code, codew) {
+startTimer = function(tick, code){
   this.timer = window.setInterval(code, tick)
   this.clearTimer = function() {
     window.clearInterval(this.timer)
-  }
+  } 
 }
 
-update = function() {                       
-  var ballIsStillInPlay = ball.move()        
+var ballIsStillInPlay
+
+update = function(){                       
+  ballIsStillInPlay = ball.move()   
   checkIfBallHitPaddle()
   checkIfPlayerScored(ballIsStillInPlay)
 }
@@ -335,7 +330,7 @@ checkIfBallHitPaddle = function(){
 
 checkIfPlayerScored = function(ballIsStillInPlay){
   if (ballIsStillInPlay){
-    Timer.clearTimer()
+    timer.clearTimer()
     scorePlayer(ballIsStillInPlay)
     checkIfPlayerWon() 
   }  
@@ -343,43 +338,35 @@ checkIfPlayerScored = function(ballIsStillInPlay){
 
 scorePlayer = function(ballIsStillInPlay){
   scorePlayerA(ballIsStillInPlay)    
-  scorePlayerB(ballIsStillInPlay)   
+  scorePlayerB(ballIsStillInPlay) 
 }
 
 scorePlayerA = function(ballIsStillInPlay){
-  if (ballIsStillInPlay == 1)
+  if (ballIsStillInPlay == 1){
     leftDisplay.setValue(leftDisplay.value + 1)
+  }
 }
 
 scorePlayerB = function(ballIsStillInPlay){
-  if (ballIsStillInPlay == 2)
+  if (ballIsStillInPlay == 2){
     rightDisplay.setValue(rightDisplay.value + 1)
+  }
 }
 
 checkIfPlayerWon = function(){
   if (leftDisplay.value == 9 || rightDisplay.value == 9) 
-    Timer.clearTimer()
-  
-  else 
+    timer.clearTimer()
+  else
+    timer.clearTimer()
     startRound()
 }
 
 setPaddlePositionWhenGameStarts = function(){
-  setRightPaddlePositionWhenGameStarts()
-  setLeftPaddlePositionWhenGameStarts()
+  removePaddles()
+  createPaddlesAndSetPosition()
 }
-
-setRightPaddlePositionWhenGameStarts = function(){
-  leftPaddle.p = { x: leftBoarder, y: (height / 2 - 30) }
-  leftPaddle.move(0)
-}
-
-setLeftPaddlePositionWhenGameStarts = function(){
-  rightPaddle.p = { x: width - paddleWidth - leftBoarder, y: (height / 2 - 30) }
-  rightPaddle.move(0)
-}
-
-showCurrentPlayerText = function(tagId, text){
-  var element = document.getElementById(tagId)
-  element.innerHTML = text
+ 
+removePaddles = function(){
+  court.removeChild(leftPaddle)
+  court.removeChild(rightPaddle)
 }
