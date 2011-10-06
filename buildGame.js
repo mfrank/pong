@@ -220,26 +220,29 @@ createPaddle = function(x){
   return paddle
 }
 
+
 newPaddle = function(position, size) {
   block = newBlock(position, size, "white")
   block.p = position
   block.s = size
+  var boarderTop = block.s.height + 190
+  var boarderBottom = 15
+
   block.move = function(go) { 
-    
-    if (this.p.y >= 15){
+    if (this.p.y >= boarderBottom && this.p.y <= boarderTop){
       this.p.y += go
       this.style.top = this.p.y + 'px'
     }
     else
-      this.p.y = 15
+      this.p.y = boarderBottom
       this.style.top = this.p.y + 'px'
 
-   if (this.p.y <= block.s.height + 190){
+    if (this.p.y <= boarderTop){
       this.p.y += go
       this.style.top = this.p.y  + 'px'
     }
     else
-      this.p.y = block.s.height + 190
+      this.p.y = boarderTop
       this.style.top = this.p.y + 'px'
   }
 
@@ -251,27 +254,27 @@ newPaddle = function(position, size) {
         paddleArea = 100*(ball.p.y - this.p.y)/block.s.height
   
         if(paddleArea>=0 && paddleArea<=1*100/7)
-          ball.v.y = 1.1 * ball.v.y + (-3)
+          ball.v.y = ball.v.y + (-3)
         
         if(paddleArea>1*100/7 && paddleArea<=2*100/7)
-          ball.v.y = 1.1 * ball.v.y + (-2)
+          ball.v.y = ball.v.y + (-2)
         
         if(paddleArea>2*100/7 && paddleArea<=3*100/7)
-          ball.v.y = 1.1 * ball.v.y + (-1)
+          ball.v.y = ball.v.y + (-1)
         
         if(paddleArea>3*100/7 && paddleArea<=4*100/7)
           ball.v.y = ball.v.y
         
         if(paddleArea>4*100/7 && paddleArea<=5*100/7)
-          ball.v.y = 1.1 * ball.v.y + 1
+          ball.v.y = ball.v.y + 1
         
         if(paddleArea>5*100/7 && paddleArea<=6*100/7)
-          ball.v.y = 1.1 * ball.v.y + 2
+          ball.v.y = ball.v.y + 2
         
         if(paddleArea>6*100/7 && paddleArea<=7*100/7)
-          ball.v.y = 1.1 * ball.v.y + 3
+          ball.v.y = ball.v.y + 3
 
-        ball.v.x = -1.1*ball.v.x
+        ball.v.x = -(ball.v.x * 1.1)
     
       }
     }
