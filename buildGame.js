@@ -251,27 +251,28 @@ newPaddle = function(position, size) {
         paddleArea = 100*(ball.p.y - this.p.y)/block.s.height
   
         if(paddleArea>=0 && paddleArea<=1*100/7)
-          ball.v.y = ball.v.y + (-3)
+          ball.v.y = 1.1 * ball.v.y + (-3)
         
         if(paddleArea>1*100/7 && paddleArea<=2*100/7)
-          ball.v.y = ball.v.y + (-2)
+          ball.v.y = 1.1 * ball.v.y + (-2)
         
         if(paddleArea>2*100/7 && paddleArea<=3*100/7)
-          ball.v.y = ball.v.y + (-1)
+          ball.v.y = 1.1 * ball.v.y + (-1)
         
         if(paddleArea>3*100/7 && paddleArea<=4*100/7)
           ball.v.y = ball.v.y
         
         if(paddleArea>4*100/7 && paddleArea<=5*100/7)
-          ball.v.y = ball.v.y + 1
+          ball.v.y = 1.1 * ball.v.y + 1
         
         if(paddleArea>5*100/7 && paddleArea<=6*100/7)
-          ball.v.y = ball.v.y + 2
+          ball.v.y = 1.1 * ball.v.y + 2
         
         if(paddleArea>6*100/7 && paddleArea<=7*100/7)
-          ball.v.y = ball.v.y + 3
+          ball.v.y = 1.1 * ball.v.y + 3
 
-        ball.v.x = -ball.v.x
+        ball.v.x = -1.1*ball.v.x
+    
       }
     }
   }
@@ -305,11 +306,11 @@ movePlayerPaddleUp = function(paddle, direction){
 startRound = function(playerNumber, direction){
   ball.p = { x: 345, y: 170}
   ball.v = { x: 3, y: 3}
-  timer = new startTimer(20, update)
+  timer = new startTimer(update, 20)
 }
 
-startTimer = function(tick, code){
-  this.timer = window.setInterval(code, tick)
+startTimer = function(update, tick){
+  this.timer = window.setInterval(update, tick)
   this.clearTimer = function() {
     window.clearInterval(this.timer)
   } 
@@ -318,7 +319,7 @@ startTimer = function(tick, code){
 var ballIsStillInPlay
 
 update = function(){                       
-  ballIsStillInPlay = ball.move()   
+  ballIsStillInPlay = ball.move()      
   checkIfBallHitPaddle()
   checkIfPlayerScored(ballIsStillInPlay)
 }
@@ -357,7 +358,6 @@ checkIfPlayerWon = function(){
   if (leftDisplay.value == 9 || rightDisplay.value == 9) 
     timer.clearTimer()
   else
-    timer.clearTimer()
     startRound()
 }
 
